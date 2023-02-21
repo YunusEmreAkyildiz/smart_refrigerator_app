@@ -68,6 +68,29 @@ class _MyHomePageState extends State<MyHomePage> {
               style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
               child: const Text('Data Set (uses doc ID)'),
             ),
+            ElevatedButton(
+              onPressed: () => dataUpdate(),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.yellow.shade700),
+              child: const Text('Data Update (doc update)'),
+            ),
+            ElevatedButton(
+              onPressed: () => dataDelete(),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text('Data Delete (doc delete)'),
+            ),
+            ElevatedButton(
+              onPressed: () => dataReadOneTime(),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple.shade600),
+              child: const Text('Data Read (one time)'),
+            ),
+            ElevatedButton(
+              onPressed: () => dataReadRealTime(),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple.shade900),
+              child: const Text('Data Read (real time)'),
+            ),
           ],
         ),
       ),
@@ -96,6 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 void dataAdd() async {
   debugPrint('dataAdd CALLED!');
+
   Map<String, dynamic> userMap = {
     'name': 'Yunus',
     'age': 24,
@@ -105,11 +129,13 @@ void dataAdd() async {
     'createdAt': FieldValue.serverTimestamp()
   };
   await _dbInstance.collection('users').add(userMap);
+
   debugPrint('dataAdd FINISHED!');
 }
 
 void dataSet() async {
   debugPrint('dataSet CALLED!');
+
   var newDocID = _dbInstance.collection('users').doc().id;
 
   await _dbInstance
@@ -120,5 +146,47 @@ void dataSet() async {
     'university': 'Istanbul University - Cerrahpasa',
     'readCounter': FieldValue.increment(1)
   }, SetOptions(merge: true));
+
   debugPrint('dataSet FINISHED!');
+}
+
+//Update'in set+merge'ten farkı: set için doc id'nin olması gerekmez, olmazsa oluşturur, update için id gerekir, öyle id yoksa hata fırlatır.
+//Eğer Update'te verdiğimiz field document'ta yoksa o field'ı oluşturur ve verisini ekler
+void dataUpdate() async {
+  debugPrint('dataUpdate CALLED!');
+
+  await _dbInstance
+      .doc('users/G4Fei2kpDH3WP5M3CfZc')
+      .update({'age': 26, 'adress.province': 'Avcilar'});
+
+  debugPrint('dataUpdate FINISHED!');
+}
+
+void dataDelete() async {
+  debugPrint('dataDelete CALLED!');
+
+  //document'tı tamamen silmek için
+  await _dbInstance.doc('users/32b758htQCvmkAzNgvxx').delete();
+  //bir document'taki belli bir field'ı silmek için
+  await _dbInstance
+      .doc('users/xbnnaHn8MbFfGiDU8yoq')
+      .update({'adress': FieldValue.delete()});
+
+  debugPrint('dataDelete FINISHED!');
+}
+
+void dataReadOneTime() async {
+  debugPrint('dataReadOneTime CALLED!');
+
+
+
+  debugPrint('dataReadOneTime FINISHED!');
+}
+
+void dataReadRealTime() async {
+  debugPrint('dataReadRealTime CALLED!');
+
+  
+
+  debugPrint('dataReadRealTime FINISHED!');
 }
