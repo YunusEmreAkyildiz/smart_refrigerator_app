@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 final FirebaseFirestore _dbInstance = FirebaseFirestore.instance;
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -79,38 +79,46 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void dataAdd() async {
-    Map<String, dynamic> _userMap = {
-      'name': 'yunus',
-      'age': 24,
-      'isStudent': true,
-      'adress': {'city': 'Istanbul', 'province': 'Maltepe'},
-      'colors': FieldValue.arrayUnion(['Blue', 'Green']),
-      'createdAt': FieldValue.serverTimestamp()
-    };
-    await _dbInstance.collection('users').add(_userMap);
-    _incrementCounter();
-  }
+  // dataAdd function that increments the counter
+  // void dataAdd() async {
+  //   Map<String, dynamic> userMap = {
+  //     'name': 'Yunus Emre',
+  //     'age': 24,
+  //     'isStudent': true,
+  //     'adress': {'city': 'Istanbul', 'province': 'Maltepe'},
+  //     'colors': FieldValue.arrayUnion(['Blue', 'Green']),
+  //     'createdAt': FieldValue.serverTimestamp()
+  //   };
+  //   await _dbInstance.collection('users').add(userMap);
+  //   _incrementCounter();
+  // }
 }
 
-// void dataAdd(var counter) async {
-//   setState(() {
-//       counter++;
-//     });
-//   _incrementCounter();
-//   Map<String, dynamic> _userMap = {
-//     'name': 'yunus',
-//     'age': 24,
-//     'isStudent': true,
-//     'adress': {'city': 'Istanbul', 'province': 'Maltepe'},
-//     'colors': FieldValue.arrayUnion(['Blue', 'Green']),
-//     'createdAt': FieldValue.serverTimestamp()
-//   };
-//   await _dbInstance.collection('users').add(_userMap);
-// }
+void dataAdd() async {
+  debugPrint('dataAdd CALLED!');
+  Map<String, dynamic> userMap = {
+    'name': 'Yunus',
+    'age': 24,
+    'isStudent': true,
+    'adress': {'city': 'Istanbul', 'province': 'Maltepe'},
+    'colors': FieldValue.arrayUnion(['Blue', 'Green']),
+    'createdAt': FieldValue.serverTimestamp()
+  };
+  await _dbInstance.collection('users').add(userMap);
+  debugPrint('dataAdd FINISHED!');
+}
 
 void dataSet() async {
-  await _dbInstance.doc('users/ux7f02f1VOR3LNBWdNnR').set(
-      {'university': 'Istanbul University - Cerrahpasa'},
-      SetOptions(merge: true));
+  debugPrint('dataSet CALLED!');
+  var newDocID = _dbInstance.collection('users').doc().id;
+
+  await _dbInstance
+      .doc('users/$newDocID')
+      .set({'name': 'Emre', 'userID': newDocID});
+
+  await _dbInstance.doc('users/G4Fei2kpDH3WP5M3CfZc').set({
+    'university': 'Istanbul University - Cerrahpasa',
+    'readCounter': FieldValue.increment(1)
+  }, SetOptions(merge: true));
+  debugPrint('dataSet FINISHED!');
 }
