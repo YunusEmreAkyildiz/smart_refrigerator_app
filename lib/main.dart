@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +11,7 @@ Future<void> main() async {
 }
 
 final FirebaseFirestore _dbInstance = FirebaseFirestore.instance;
+StreamSubscription? usersStreamSubscribe;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -91,6 +94,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   backgroundColor: Colors.purple.shade900),
               child: const Text('Data Read (real time)'),
             ),
+            ElevatedButton(
+                onPressed: () => dataStreamStop(),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red.shade600),
+                child: const Text('Data Stream Stop (real time)')),
           ],
         ),
       ),
@@ -150,7 +158,7 @@ void dataSet() async {
   debugPrint('dataSet FINISHED!');
 }
 
-//Update'in set+merge'ten farkı: set için doc id'nin olması gerekmez, olmazsa oluşturur, update için id gerekir, öyle id yoksa hata fırlatır.
+//Update'in set+merge'ten farkı: set için doc id'nin olması gerekmez, olmazsa oluşturur; update için id gerekir, öyle id yoksa hata fırlatır.
 //Eğer Update'te verdiğimiz field document'ta yoksa o field'ı oluşturur ve verisini ekler
 void dataUpdate() async {
   debugPrint('dataUpdate CALLED!');
@@ -178,15 +186,46 @@ void dataDelete() async {
 void dataReadOneTime() async {
   debugPrint('dataReadOneTime CALLED!');
 
+  var readCollection = await _dbInstance.collection('users').get();
+  debugPrint(readCollection.docs.length.toString());
+  for (var item in readCollection.docs) {
+    debugPrint('Document ID: ${item.id}');
+    Map docData = item.data();
+    debugPrint(docData['university']);
+  }
 
+  var readDocument = await _dbInstance.doc('users/Ene6R954Gb6bnM80pnkX').get();
+  debugPrint(readDocument.data()!['adress']['province'].toString());
 
   debugPrint('dataReadOneTime FINISHED!');
 }
 
-void dataReadRealTime() async {
+void dataReadRealTime() {
   debugPrint('dataReadRealTime CALLED!');
 
-  
+  //Document'ta 1 field bile değişse doc komple gelir.
+  var usersStreamCollection = _dbInstance.collection('users').snapshots();
+  usersStreamSubscribe = usersStreamCollection.listen((event) {
+    //docChanges yerine .docs çağrılırsa, 1 doc'ta 1 field değişse bile collection'daki tüm doc'lar gelir.
+    event.docChanges.forEach((element) {
+      debugPrint(element.doc.data().toString());
+    });
+  });
+
+  //Sadece tek belirli bir doc dinlemek için
+  // var usersStreamDoc =
+  //     _dbInstance.doc('users/G4Fei2kpDH3WP5M3CfZc').snapshots();
+  // usersStreamSubscribe = usersStreamDoc.listen((event) {
+  //   debugPrint(event.data().toString());
+  // });
 
   debugPrint('dataReadRealTime FINISHED!');
+}
+
+void dataStreamStop() async {
+  debugPrint('dataStreamStop CALLED!');
+
+  await usersStreamSubscribe!.cancel();
+
+  debugPrint('dataStreamStop FINISHED!');
 }
