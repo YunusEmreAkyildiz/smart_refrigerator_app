@@ -95,10 +95,21 @@ class _MyHomePageState extends State<MyHomePage> {
               child: const Text('Data Read (real time)'),
             ),
             ElevatedButton(
-                onPressed: () => dataStreamStop(),
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red.shade600),
-                child: const Text('Data Stream Stop (real time)')),
+              onPressed: () => dataStreamStop(),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red.shade600),
+              child: const Text('Data Stream Stop (real time)'),
+            ),
+            ElevatedButton(
+              onPressed: () => batchOp(),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.cyan),
+              child: const Text('Batch Operation'),
+            ),
+            ElevatedButton(
+              onPressed: () => transactionOp(),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.brown),
+              child: const Text('Transaction Operation'),
+            ),
           ],
         ),
       ),
@@ -228,4 +239,56 @@ void dataStreamStop() async {
   await usersStreamSubscribe!.cancel();
 
   debugPrint('dataStreamStop FINISHED!');
+}
+
+void batchOp() async {
+  debugPrint('batchOp CALLED!');
+
+  WriteBatch batch = _dbInstance.batch();
+  CollectionReference counterCollectionRef = _dbInstance.collection('counter');
+
+  //Adding new docs to 'counter' collection.
+  for (int i = 0; i < 100; i++) {
+    var newDoc = counterCollectionRef.doc();
+    batch.set(newDoc, {'Counter': ++i, 'ID': newDoc.id});
+  }
+
+  //To add a field in every doc in a collection
+  // var allDocs = await counterCollectionRef.get();
+  // allDocs.docs.forEach((element) {
+  //   batch.update(
+  //       element.reference, {'Created at': FieldValue.serverTimestamp()});
+  // });
+
+  //To delete every doc in a collection (also the collection gets deleted in the end)
+  // var allDocs = await counterCollectionRef.get();
+  // allDocs.docs.forEach((element) {
+  //   batch.delete(element.reference);
+  // });
+
+  await batch.commit();
+
+  debugPrint('batchOp FINISHED!');
+}
+
+void transactionOp() {
+  debugPrint('transactionOp CALLED!');
+
+  _dbInstance.runTransaction((transaction) async {
+    DocumentReference<Map<String, dynamic>> docEmreRef =
+        _dbInstance.doc('users/G4Fei2kpDH3WP5M3CfZc');
+    DocumentReference<Map<String, dynamic>> docYunusRef =
+        _dbInstance.doc('users/Ene6R954Gb6bnM80pnkX');
+
+    var docEmreSnapshot = await transaction.get(docEmreRef);
+    var emreMoneyBalance = docEmreSnapshot.data()!['moneyBalance'];
+    if (emreMoneyBalance >= 100) {
+      var newEmreMoneyBalance = emreMoneyBalance - 100;
+      transaction.update(docEmreRef, {'moneyBalance': newEmreMoneyBalance});
+      transaction
+          .update(docYunusRef, {'moneyBalance': FieldValue.increment(100)});
+    }
+  });
+
+  debugPrint('transactionOp FINISHED!');
 }
