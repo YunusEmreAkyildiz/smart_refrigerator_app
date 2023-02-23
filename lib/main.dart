@@ -110,6 +110,12 @@ class _MyHomePageState extends State<MyHomePage> {
               style: ElevatedButton.styleFrom(backgroundColor: Colors.brown),
               child: const Text('Transaction Operation'),
             ),
+            ElevatedButton(
+              onPressed: () => makeQuery(),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey.shade700),
+              child: const Text('Make a query'),
+            ),
           ],
         ),
       ),
@@ -291,4 +297,25 @@ void transactionOp() {
   });
 
   debugPrint('transactionOp FINISHED!');
+}
+
+void makeQuery() async {
+  debugPrint('makeQuery CALLED!');
+
+  var collectionRef = _dbInstance.collection('users');
+  var collectionRefLimited = _dbInstance.collection('users').limit(1);
+  var ageLimitDocs =
+      await collectionRefLimited.where('age', isEqualTo: 25).get();
+  var orderByAge = await collectionRef.orderBy('age', descending: true).get();
+
+  for (var doc in ageLimitDocs.docs) {
+    debugPrint(doc.data().toString());
+  }
+  debugPrint('--------------------------------------');
+
+  for (var doc in orderByAge.docs) {
+    debugPrint(doc.data().toString());
+  }
+
+  debugPrint('makeQuery FINISHED!');
 }
