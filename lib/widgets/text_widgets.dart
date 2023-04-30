@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-
-class AppTexts {
-  static const String dontHaveAnAccountText = "Don't have an account?";
-}
+import 'package:smart_refrigerator_app/constants/colors.dart';
 
 Widget textFormFieldWidget(bool autofocusEnable, bool isPasswordType,
     TextEditingController controller, Icon prefixIcon, String hintText,
     {TextInputAction? textInputAction, TextInputType? inputType}) {
   return TextFormField(
+    cursorColor: AppColors.primaryAppColor,
     autofocus: autofocusEnable,
     obscureText: isPasswordType,
     controller: controller,

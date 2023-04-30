@@ -18,7 +18,9 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'FridgeTracker',
         theme: ThemeData(
-          primaryColor: AppColors.primaryAppColor,
+          //primaryColor: AppColors.primaryAppColor,
+          primarySwatch: AppColors.appPrimarySwatch,
+          //bottomAppBarColor: AppColors.appPrimarySwatch,
         ),
         home: SignInScreen());
   }

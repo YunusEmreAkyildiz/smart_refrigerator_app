@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_refrigerator_app/constants/images.dart';
+import 'package:smart_refrigerator_app/constants/texts.dart';
+import 'package:smart_refrigerator_app/screens/sign_up_screen.dart';
 import 'package:smart_refrigerator_app/widgets/buttons.dart';
 import 'package:smart_refrigerator_app/widgets/text_widgets.dart';
 import 'package:smart_refrigerator_app/constants/colors.dart';
@@ -20,8 +22,8 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     final emailField = textFormFieldWidget(
-        false, false, emailController, const Icon(Icons.person), "E-mail",
-        textInputAction: TextInputAction.done,
+        false, false, emailController, const Icon(Icons.mail), "E-mail",
+        textInputAction: TextInputAction.next,
         inputType: TextInputType.emailAddress);
     final passwordField = textFormFieldWidget(
         false, true, passwordController, const Icon(Icons.lock), "Password",
@@ -72,7 +74,13 @@ class _SignInScreenState extends State<SignInScreen> {
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SignUpScreen()));
+                          },
                         ),
                       ],
                     ),
