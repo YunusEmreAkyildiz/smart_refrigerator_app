@@ -56,6 +56,15 @@ class _SignInScreenState extends State<SignInScreen> {
                       children: [
                         const Text(AppTexts.dontHaveAnAccountText),
                         TextButton(
+                          //To cancel the color that appears when the 'Sign Up' is clicked.
+                          style: ButtonStyle(
+                            overlayColor:
+                                MaterialStateProperty.resolveWith((states) {
+                              if (states.contains(MaterialState.pressed)) {
+                                return Colors.transparent;
+                              }
+                            }),
+                          ),
                           child: const Text(
                             'Sign Up',
                             style: TextStyle(
