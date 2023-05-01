@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:smart_refrigerator_app/constants/colors.dart';
 import 'package:smart_refrigerator_app/model/user_model.dart';
 import 'package:smart_refrigerator_app/screens/home_screen.dart';
+import 'package:smart_refrigerator_app/screens/sign_in_screen.dart';
 
 Future signIn(String email, String password, FormState? currentState, formKey,
     FirebaseAuth auth, BuildContext context) async {
@@ -16,7 +17,7 @@ Future signIn(String email, String password, FormState? currentState, formKey,
           .then((userId) => {
                 Fluttertoast.showToast(
                     msg: 'Login successful',
-                    backgroundColor: AppColors.primaryAppColor),
+                    backgroundColor: AppColors.toastSuccessfulColor),
                 Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (context) => HomeScreen())),
               });
@@ -26,7 +27,7 @@ Future signIn(String email, String password, FormState? currentState, formKey,
           errorMessage = "Your E-mail address appears to be malformed.";
           break;
         case "wrong-password":
-          errorMessage = "Wrong password";
+          errorMessage = "Wrong E-mail and/or password";
           break;
         case "user-not-found":
           errorMessage = "User with this E-mail doesn't exist.";
@@ -77,7 +78,7 @@ Future signUp(
           errorMessage = "Your email address appears to be malformed.";
           break;
         case "wrong-password":
-          errorMessage = "Your password is wrong.";
+          errorMessage = "Wrong password";
           break;
         case "user-not-found":
           errorMessage = "User with this email doesn't exist.";
@@ -122,4 +123,14 @@ postDetailsToFirestore(FirebaseAuth auth, String firstName, String lastName,
 
   Navigator.pushAndRemoveUntil((context),
       MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false);
+}
+
+Future signOut(BuildContext context) async {
+  await FirebaseAuth.instance.signOut().then((value) => {
+        Fluttertoast.showToast(
+            msg: 'Successfully signed out',
+            backgroundColor: AppColors.toastSuccessfulColor)
+      });
+  Navigator.of(context)
+      .pushReplacement(MaterialPageRoute(builder: (context) => SignInScreen()));
 }
