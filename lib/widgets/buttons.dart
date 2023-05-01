@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_refrigerator_app/constants/colors.dart';
 
-Material AppButton(BuildContext context, String text, Function()? onPressed) {
+Material appButton(BuildContext context, String text, Function()? onPressed) {
   return Material(
     elevation: 5,
     borderRadius: BorderRadius.circular(30),

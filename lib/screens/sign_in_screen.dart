@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_refrigerator_app/constants/images.dart';
 import 'package:smart_refrigerator_app/constants/texts.dart';
 import 'package:smart_refrigerator_app/screens/sign_up_screen.dart';
+import 'package:smart_refrigerator_app/services/functions.dart';
 import 'package:smart_refrigerator_app/widgets/buttons.dart';
 import 'package:smart_refrigerator_app/widgets/text_widgets.dart';
 import 'package:smart_refrigerator_app/constants/colors.dart';
@@ -14,20 +16,41 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey();
 
   //TextEditingControllers
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  //Firebase Authentication
+  final _auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     final emailField = textFormFieldWidget(
         false, false, emailController, const Icon(Icons.mail), "E-mail",
+        validator: (value) {
+      if (value!.isEmpty) {
+        return ('Please enter your E-mail');
+      }
+      if (!(AppRegExps.emailRegExp).hasMatch(value)) {
+        return ('Please enter a valid E-mail adress');
+      }
+      return null;
+    },
         textInputAction: TextInputAction.next,
         inputType: TextInputType.emailAddress);
     final passwordField = textFormFieldWidget(
         false, true, passwordController, const Icon(Icons.lock), "Password",
-        textInputAction: TextInputAction.done);
+        validator: (value) {
+      if (value!.isEmpty) {
+        return ('Please enter your password');
+      }
+      if (!(AppRegExps.passwordRegExp).hasMatch(value)) {
+        return ('Please enter a valid password with min. 6 characters');
+      }
+      return null;
+    }, textInputAction: TextInputAction.done);
     return Scaffold(
       backgroundColor: AppColors.appBackgroundColor,
       body: Center(
@@ -51,7 +74,10 @@ class _SignInScreenState extends State<SignInScreen> {
                     const SizedBox(height: 15),
                     passwordField,
                     const SizedBox(height: 45),
-                    AppButton(context, 'Sign In', () {}),
+                    appButton(context, 'Sign In', () {
+                      signIn(emailController.text, passwordController.text,
+                          _formKey.currentState, _formKey, _auth, context);
+                    }),
                     const SizedBox(height: 15),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -65,6 +91,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               if (states.contains(MaterialState.pressed)) {
                                 return Colors.transparent;
                               }
+                              return null;
                             }),
                           ),
                           child: const Text(

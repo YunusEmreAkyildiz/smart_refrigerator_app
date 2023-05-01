@@ -3,7 +3,9 @@ import 'package:smart_refrigerator_app/constants/colors.dart';
 
 Widget textFormFieldWidget(bool autofocusEnable, bool isPasswordType,
     TextEditingController controller, Icon prefixIcon, String hintText,
-    {TextInputAction? textInputAction, TextInputType? inputType}) {
+    {String? Function(String?)? validator,
+    TextInputAction? textInputAction,
+    TextInputType? inputType}) {
   return TextFormField(
     cursorColor: AppColors.primaryAppColor,
     autofocus: autofocusEnable,
@@ -14,6 +16,7 @@ Widget textFormFieldWidget(bool autofocusEnable, bool isPasswordType,
       controller.text = newValue!;
     },
     textInputAction: textInputAction ?? TextInputAction.none,
+    validator: validator,
     decoration: InputDecoration(
       prefixIcon: prefixIcon,
       contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
