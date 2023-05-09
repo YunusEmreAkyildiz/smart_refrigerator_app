@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:smart_refrigerator_app/constants/colors.dart';
-import 'package:smart_refrigerator_app/constants/styles.dart';
-import 'package:smart_refrigerator_app/constants/texts.dart';
+import 'package:smart_refrigerator_app/shared/colors.dart';
+import 'package:smart_refrigerator_app/shared/styles.dart';
+import 'package:smart_refrigerator_app/shared/texts.dart';
 import 'package:smart_refrigerator_app/services/functions.dart';
 import 'package:smart_refrigerator_app/widgets/buttons.dart';
 import 'package:smart_refrigerator_app/widgets/text_widgets.dart';

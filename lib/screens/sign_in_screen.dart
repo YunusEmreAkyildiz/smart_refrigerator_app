@@ -1,12 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:smart_refrigerator_app/constants/images.dart';
-import 'package:smart_refrigerator_app/constants/texts.dart';
+import 'package:smart_refrigerator_app/shared/images.dart';
+import 'package:smart_refrigerator_app/shared/texts.dart';
 import 'package:smart_refrigerator_app/screens/sign_up_screen.dart';
 import 'package:smart_refrigerator_app/services/functions.dart';
 import 'package:smart_refrigerator_app/widgets/buttons.dart';
 import 'package:smart_refrigerator_app/widgets/text_widgets.dart';
-import 'package:smart_refrigerator_app/constants/colors.dart';
+import 'package:smart_refrigerator_app/shared/colors.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});

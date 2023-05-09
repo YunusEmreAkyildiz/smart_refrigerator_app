@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:smart_refrigerator_app/constants/texts.dart';
+import 'package:smart_refrigerator_app/shared/texts.dart';
 import 'package:smart_refrigerator_app/model/user_model.dart';
 import 'package:smart_refrigerator_app/services/functions.dart';
 

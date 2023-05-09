@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smart_refrigerator_app/constants/colors.dart';
+import 'package:smart_refrigerator_app/shared/colors.dart';
 
 Widget textFormFieldWidget(bool autofocusEnable, bool isPasswordType,
     TextEditingController controller, Icon prefixIcon, String hintText,
