@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:smart_refrigerator_app/shared/icons.dart';
+import 'package:smart_refrigerator_app/shared/styles.dart';
 import 'package:smart_refrigerator_app/shared/texts.dart';
 import 'package:smart_refrigerator_app/model/user_model.dart';
 import 'package:smart_refrigerator_app/services/functions.dart';
+import 'package:smart_refrigerator_app/widgets/buttons.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -33,28 +36,37 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: const Icon(AppIcons.homeLeadingIcon),
+        leadingWidth: 45,
         title: const Text(AppTexts.homeScreenAppBarTitle),
+        titleSpacing: 5,
+        elevation: 0,
+        actions: [
+          IconButton(
+              icon: const Icon(AppIcons.homeActionsAccountIcon),
+              onPressed: () {})
+        ],
       ),
-      body: Center(
+      body: Padding(
+        padding: EdgeInsets.all((MediaQuery.of(context).size.aspectRatio * 20)),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          //crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Welcome',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            SizedBox(
+              width: (MediaQuery.of(context).size.width),
+              child: Text(
+                getWelcomeText('${loggedInUser.firstName}'),
+                style: welcomeTextStyle(context),
+              ),
             ),
-            const SizedBox(height: 15),
-            Text('${loggedInUser.firstName} ${loggedInUser.lastName}',
-                style: const TextStyle(
-                    color: Colors.black54, fontWeight: FontWeight.w500)),
             const SizedBox(height: 10),
-            Text('${loggedInUser.email}',
-                style: const TextStyle(
-                    color: Colors.black54, fontWeight: FontWeight.w500)),
+            Text('${loggedInUser.email}', style: faintTextStyle()),
+            const SizedBox(height: 15),
+            appButton(context, AppTexts.getFridgePhotoe, () {}),
             const SizedBox(height: 15),
             ActionChip(
-              avatar: Icon(Icons.exit_to_app),
-              label: const Text('Sign Out'),
+              avatar: const Icon(AppIcons.signOutIcon),
+              label: const Text(AppTexts.signOutText),
               onPressed: () {
                 signOut(context);
               },

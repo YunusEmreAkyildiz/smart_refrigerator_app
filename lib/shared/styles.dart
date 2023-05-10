@@ -7,3 +7,13 @@ TextStyle? signUpPageTitleStyle() {
     fontWeight: FontWeight.bold,
   );
 }
+
+TextStyle? welcomeTextStyle(BuildContext context) {
+  return TextStyle(
+      fontSize: (MediaQuery.of(context).size.aspectRatio * 65),
+      fontWeight: FontWeight.bold);
+}
+
+TextStyle? faintTextStyle() {
+  return const TextStyle(color: Colors.black54, fontWeight: FontWeight.w500);
+}

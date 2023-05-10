@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_refrigerator_app/shared/colors.dart';
+import 'package:smart_refrigerator_app/shared/icons.dart';
 import 'package:smart_refrigerator_app/shared/styles.dart';
 import 'package:smart_refrigerator_app/shared/texts.dart';
 import 'package:smart_refrigerator_app/services/functions.dart';
@@ -31,7 +32,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     final nameField = textFormFieldWidget(false, false, firstNameController,
-        const Icon(Icons.person), "First name", validator: (value) {
+        const Icon(AppIcons.firstNameIcon), "First name", validator: (value) {
       if (value!.isEmpty) {
         return ('Please enter your first name');
       }
@@ -41,7 +42,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       return null;
     }, textInputAction: TextInputAction.next, inputType: TextInputType.name);
     final lastNameField = textFormFieldWidget(
-        false, false, lastNameController, const Icon(Icons.person), "Last name",
+        false, false, lastNameController, const Icon(AppIcons.lastNameIcon), "Last name",
         validator: (value) {
       if (value!.isEmpty) {
         return ('Please enter your last name');
@@ -52,7 +53,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       return null;
     }, textInputAction: TextInputAction.next, inputType: TextInputType.name);
     final emailField = textFormFieldWidget(
-        false, false, emailController, const Icon(Icons.mail), "E-mail",
+        false, false, emailController, const Icon(AppIcons.emailIcon), "E-mail",
         validator: (value) {
       if (value!.isEmpty) {
         return ('Please enter your E-mail');
@@ -65,7 +66,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         textInputAction: TextInputAction.next,
         inputType: TextInputType.emailAddress);
     final passwordField = textFormFieldWidget(
-        false, true, passwordController, const Icon(Icons.lock), "Password",
+        false, true, passwordController, const Icon(AppIcons.passwordIcon), "Password",
         validator: (value) {
       if (value!.isEmpty) {
         return ('Please enter your password');
@@ -79,7 +80,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         false,
         true,
         confirmPasswordController,
-        const Icon(Icons.lock_reset),
+        const Icon(AppIcons.confirmPasswordIcon),
         "Confirm password", validator: (value) {
       if (value!.isEmpty) {
         return ('Please confirm your password');
