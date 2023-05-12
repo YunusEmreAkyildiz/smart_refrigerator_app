@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:smart_refrigerator_app/shared/colors.dart';
@@ -134,3 +135,27 @@ Future signOut(BuildContext context) async {
   Navigator.of(context)
       .pushReplacement(MaterialPageRoute(builder: (context) => SignInScreen()));
 }
+
+Future<String> getImageUrl() async {
+  final storageRef = FirebaseStorage.instance.ref();
+  final pathReference = storageRef.child("images/0105202315_31_40.jpg");
+  await Future.delayed(Duration(seconds: 3));
+  /*************************************************************** */
+  // final gsReference = FirebaseStorage.instance.refFromURL(
+  //     "gs://smart-refrigerator-app-db.appspot.com/0105202315:31:40.jpg");
+  // final imageRef = gsReference.child("images/island.jpg");
+  String imageUrl;
+
+  try {
+    imageUrl = await pathReference.getDownloadURL();
+    return imageUrl;
+  } catch (e) {
+    debugPrint(e.toString());
+    return '';
+  }
+}
+
+// showImage() async {
+//   String url = await getImageUrl();
+//   Image.network(url);
+// }

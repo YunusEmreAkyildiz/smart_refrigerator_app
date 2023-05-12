@@ -17,3 +17,9 @@ TextStyle? welcomeTextStyle(BuildContext context) {
 TextStyle? faintTextStyle() {
   return const TextStyle(color: Colors.black54, fontWeight: FontWeight.w500);
 }
+
+TextStyle? homeScreenMainTextStyle(BuildContext context) {
+  return TextStyle(
+      fontSize: (MediaQuery.of(context).size.aspectRatio * 35),
+      color: Colors.black.withOpacity(0.78));
+}
