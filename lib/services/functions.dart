@@ -7,6 +7,7 @@ import 'package:smart_refrigerator_app/shared/colors.dart';
 import 'package:smart_refrigerator_app/model/user_model.dart';
 import 'package:smart_refrigerator_app/screens/home_screen.dart';
 import 'package:smart_refrigerator_app/screens/sign_in_screen.dart';
+import 'package:smart_refrigerator_app/shared/texts.dart';
 
 Future signIn(String email, String password, FormState? currentState, formKey,
     FirebaseAuth auth, BuildContext context) async {
@@ -139,7 +140,6 @@ Future signOut(BuildContext context) async {
 Future<String> getImageUrl() async {
   final storageRef = FirebaseStorage.instance.ref();
   final pathReference = storageRef.child("images/0105202315_31_40.jpg");
-  await Future.delayed(Duration(seconds: 3));
   /*************************************************************** */
   // final gsReference = FirebaseStorage.instance.refFromURL(
   //     "gs://smart-refrigerator-app-db.appspot.com/0105202315:31:40.jpg");
@@ -153,6 +153,27 @@ Future<String> getImageUrl() async {
     debugPrint(e.toString());
     return '';
   }
+}
+
+FutureBuilder? getImage() {
+  return FutureBuilder(
+      future: getImageUrl(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(
+            color: AppColors.primaryAppColor,
+          );
+        }
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        if (snapshot.hasData) {
+          String imageURL = snapshot.data.toString();
+          return Image.network(imageURL);
+        }
+        return const Text(AppTexts.noImageFoundText);
+      },
+    );
 }
 
 // showImage() async {

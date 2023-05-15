@@ -5,8 +5,8 @@ import 'package:smart_refrigerator_app/shared/images.dart';
 import 'package:smart_refrigerator_app/shared/texts.dart';
 import 'package:smart_refrigerator_app/screens/sign_up_screen.dart';
 import 'package:smart_refrigerator_app/services/functions.dart';
-import 'package:smart_refrigerator_app/widgets/buttons.dart';
-import 'package:smart_refrigerator_app/widgets/text_widgets.dart';
+import 'package:smart_refrigerator_app/shared/widgets/buttons.dart';
+import 'package:smart_refrigerator_app/shared/widgets/text_widgets.dart';
 import 'package:smart_refrigerator_app/shared/colors.dart';
 
 class SignInScreen extends StatefulWidget {
