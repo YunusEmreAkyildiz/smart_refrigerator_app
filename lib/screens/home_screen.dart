@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:smart_refrigerator_app/screens/profile_screen.dart';
 import 'package:smart_refrigerator_app/shared/icons.dart';
 import 'package:smart_refrigerator_app/shared/styles.dart';
 import 'package:smart_refrigerator_app/shared/texts.dart';
@@ -45,7 +46,12 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
               icon: const Icon(AppIcons.homeActionsAccountIcon),
-              onPressed: () {})
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ProfileScreen()));
+              })
         ],
       ),
       body: Padding(
