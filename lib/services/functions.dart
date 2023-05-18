@@ -8,6 +8,8 @@ import 'package:smart_refrigerator_app/model/user_model.dart';
 import 'package:smart_refrigerator_app/screens/home_screen.dart';
 import 'package:smart_refrigerator_app/screens/sign_in_screen.dart';
 import 'package:smart_refrigerator_app/shared/texts.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 Future signIn(String email, String password, FormState? currentState, formKey,
     FirebaseAuth auth, BuildContext context) async {
@@ -139,11 +141,13 @@ Future signOut(BuildContext context) async {
 
 Future<String> getImageUrl() async {
   final storageRef = FirebaseStorage.instance.ref();
-  final pathReference = storageRef.child("images/0105202315_31_40.jpg");
-  /*************************************************************** */
+  final pathReference = storageRef.child("${AppTexts.userAyseOzgurId}-i.jpg");
+  /****************************************************************/
+  // A different/alternative approach
   // final gsReference = FirebaseStorage.instance.refFromURL(
   //     "gs://smart-refrigerator-app-db.appspot.com/0105202315:31:40.jpg");
   // final imageRef = gsReference.child("images/island.jpg");
+  /****************************************************************/
   String imageUrl;
 
   try {
@@ -157,26 +161,58 @@ Future<String> getImageUrl() async {
 
 FutureBuilder? getImage() {
   return FutureBuilder(
-      future: getImageUrl(),
+    future: getImageUrl(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const CircularProgressIndicator(
+          color: AppColors.primaryAppColor,
+        );
+      }
+      if (snapshot.hasError) {
+        return Text('Error: ${snapshot.error}');
+      }
+      if (snapshot.hasData) {
+        String imageURL = snapshot.data.toString();
+        return Image.network(imageURL);
+      }
+      return const Text(AppTexts.noImageFoundText);
+    },
+  );
+}
+
+Future<Map<String, dynamic>> downloadAndParseJsonFile() async {
+  final storageRef = FirebaseStorage.instance.ref();
+  final pathReference = storageRef.child('test_json.json');
+
+  try {
+    final url = await pathReference.getDownloadURL();
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      return jsonData;
+    } else {
+      throw Exception('Failed to download the JSON file');
+    }
+  } catch (e) {
+    debugPrint(e.toString());
+    return Future(() => {});
+  }
+}
+
+FutureBuilder? getJson() {
+  return FutureBuilder<Map<String, dynamic>>(
+      future: downloadAndParseJsonFile(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator(
-            color: AppColors.primaryAppColor,
-          );
+          return const CircularProgressIndicator();
         }
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         }
         if (snapshot.hasData) {
-          String imageURL = snapshot.data.toString();
-          return Image.network(imageURL);
+          final jsonData = snapshot.data!;
+          return Text(jsonData.toString());
         }
-        return const Text(AppTexts.noImageFoundText);
-      },
-    );
+        return const Text('No data available');
+      });
 }
-
-// showImage() async {
-//   String url = await getImageUrl();
-//   Image.network(url);
-// }

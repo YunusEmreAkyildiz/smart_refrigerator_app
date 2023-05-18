@@ -84,6 +84,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 debugPrint('getImage FINISHED!');
               }),
               const SizedBox(height: 15),
+              appButton(context, 'Get JSON', () {
+                debugPrint('getJson CALLED!');
+                setState(() {
+                  changeWidget = getJson()!;
+                });
+                debugPrint('getJson FINISHED!');
+              }),
+              const SizedBox(height: 15),
               ActionChip(
                 avatar: const Icon(AppIcons.signOutIcon),
                 label: const Text(AppTexts.signOutText),

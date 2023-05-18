@@ -6,6 +6,8 @@ class AppColors {
   static const Color buttonTextColor = Colors.white;
   static Color? toastErrorColor = Colors.red[900];
   static Color? toastSuccessfulColor = Colors.green[700];
+  static Color? faintTextColor = Colors.black54;
+  static Color? homeScreenMainTextColor = Colors.black.withOpacity(0.78);
   static const MaterialColor appPrimarySwatch = MaterialColor(0xff471AA0, {
     50: Color.fromRGBO(71, 26, 160, .1),
     100: Color.fromRGBO(71, 26, 160, .2),
