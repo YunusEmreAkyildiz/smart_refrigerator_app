@@ -2,6 +2,7 @@ class AppTexts {
   static const String dontHaveAnAccountText = "Don't have an account?";
   static const String signUpPageAppBarTitle = 'Join FridgeTracker Now!';
   static const String homeScreenAppBarTitle = 'FridgeTracker';
+  static const String profileScreenAppBarTitle = 'My Profile';
   static const String getFridgePhoto = 'Show my fridge!';
   static const String homeScreenMainText =
       'We hope you have a great day! Would you like to take a look inside of your fridge?';

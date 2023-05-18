@@ -8,6 +8,7 @@ class AppIcons {
   static const IconData lastNameIcon = Icons.person;
   static const IconData homeLeadingIcon = Icons.home;
   static const IconData homeActionsAccountIcon = Icons.account_circle;
+  static const IconData profileScreenBackButtonIcon = Icons.arrow_back;
   static const IconData signOutIcon = Icons.exit_to_app;
   static const Icon imageReplacerIcon = Icon(
     Icons.cloud_download,

@@ -23,3 +23,13 @@ TextStyle? homeScreenMainTextStyle(BuildContext context) {
       fontSize: (MediaQuery.of(context).size.aspectRatio * 35),
       color: AppColors.homeScreenMainTextColor);
 }
+
+TextStyle? profileScreenNameTextStyle(BuildContext context) {
+return TextStyle(
+      fontSize: (MediaQuery.of(context).size.aspectRatio * 35),
+      color: AppColors.homeScreenMainTextColor);
+}
+
+double appScreenPadding(BuildContext context) {
+  return (MediaQuery.of(context).size.aspectRatio * 20);
+}

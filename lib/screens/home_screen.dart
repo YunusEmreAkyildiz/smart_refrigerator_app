@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.all((MediaQuery.of(context).size.aspectRatio * 20)),
+        padding: EdgeInsets.all(appScreenPadding(context)),
         child: SingleChildScrollView(
           child: Column(
             //crossAxisAlignment: CrossAxisAlignment.start,
