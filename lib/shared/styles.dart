@@ -15,7 +15,8 @@ TextStyle? welcomeTextStyle(BuildContext context) {
 }
 
 TextStyle? faintTextStyle() {
-  return TextStyle(color: AppColors.faintTextColor, fontWeight: FontWeight.w500);
+  return TextStyle(
+      color: AppColors.faintTextColor, fontWeight: FontWeight.w500);
 }
 
 TextStyle? homeScreenMainTextStyle(BuildContext context) {
@@ -25,8 +26,8 @@ TextStyle? homeScreenMainTextStyle(BuildContext context) {
 }
 
 TextStyle? profileScreenNameTextStyle(BuildContext context) {
-return TextStyle(
-      fontSize: (MediaQuery.of(context).size.aspectRatio * 35),
+  return TextStyle(
+      fontSize: (MediaQuery.of(context).size.aspectRatio * 40),
       color: AppColors.homeScreenMainTextColor);
 }
 

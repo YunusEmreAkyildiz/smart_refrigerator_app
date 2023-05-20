@@ -49,7 +49,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        //leading: const Icon(AppIcons.homeLeadingIcon),
         leading: IconButton(
           icon: const Icon(AppIcons.profileScreenBackButtonIcon),
           onPressed: () {
@@ -81,10 +80,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              nameText,
-                              style: profileScreenNameTextStyle(context),
-                            )
+                            Text(nameText,
+                                style: profileScreenNameTextStyle(context))
                           ],
                         ),
                         const SizedBox(height: 10),
@@ -100,7 +97,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           context,
                           AppTexts.signOutText,
                           () {
-                            signOut(context);
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text(
+                                      AppTexts.alertDialogSignOutTitle),
+                                  content: const Text(
+                                      AppTexts.alertDialogSignOutContent),
+                                  actions: [
+                                    TextButton(
+                                      child: const Text(AppTexts
+                                          .alertDialogSignOutCancelText),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                    TextButton(
+                                      child: const Text(AppTexts
+                                          .alertDialogSignOutConfirmedText),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        signOut(context);
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
                           },
                           icon: AppIcons.signOutIcon,
                         ),

@@ -9,6 +9,11 @@ class AppTexts {
   static const String signOutText = 'Sign Out';
   static const String noImageFoundText = 'No image found';
   static const String userAyseOzgurId = 'eTUGRAQU3ZSb9DFZwrilqd82Shi1';
+  static const String alertDialogSignOutTitle = "Hey,";
+  static const String alertDialogSignOutContent =
+      "Are you sure you want to sign out?";
+  static const String alertDialogSignOutCancelText = "Cancel";
+  static const String alertDialogSignOutConfirmedText = "Yes";
 }
 
 class AppRegExps {
