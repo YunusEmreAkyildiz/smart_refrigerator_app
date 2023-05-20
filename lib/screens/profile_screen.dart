@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smart_refrigerator_app/model/user_model.dart';
 import 'package:smart_refrigerator_app/services/functions.dart';
-import 'package:smart_refrigerator_app/shared/colors.dart';
 import 'package:smart_refrigerator_app/shared/icons.dart';
 import 'package:smart_refrigerator_app/shared/images.dart';
 import 'package:smart_refrigerator_app/shared/styles.dart';
@@ -63,45 +61,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
         titleSpacing: 5,
         elevation: 0,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(appScreenPadding(context)),
-        child: SingleChildScrollView(
-          child: Column(
-            //crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(appScreenPadding(context)),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const SizedBox(height: 25),
-                    SizedBox(
-                      child: SvgPicture.asset(
-                        AppImages.profileImageDefaultSvg,
-                        fit: BoxFit.cover,
-                        color: AppColors.primaryAppColor,
-                      ),
-                    ),
-                    profileDividerWidget(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    Column(
                       children: [
-                        Text(
-                          nameText,
-                          style: profileScreenNameTextStyle(context),
-                        )
+                        const SizedBox(height: 25),
+                        profileImageWidget(),
+                        profileDividerWidget(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              nameText,
+                              style: profileScreenNameTextStyle(context),
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Text(emailText, style: faintTextStyle()),
+                        profileDividerWidget(),
                       ],
                     ),
-                    const SizedBox(height: 10),
-                    Text(emailText, style: faintTextStyle()),
-                    profileDividerWidget(),
-                    appButton(context, AppTexts.signOutText, () {
-                      signOut(context);
-                    }, icon: AppIcons.signOutIcon),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 20),
+                        child: appButton(
+                          context,
+                          AppTexts.signOutText,
+                          () {
+                            signOut(context);
+                          },
+                          icon: AppIcons.signOutIcon,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-              )
-            ],
-          ),
-        ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
