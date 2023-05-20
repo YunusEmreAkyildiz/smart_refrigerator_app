@@ -97,14 +97,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
                 debugPrint('getJson FINISHED!');
               }),
-              const SizedBox(height: 15),
-              ActionChip(
-                avatar: const Icon(AppIcons.signOutIcon),
-                label: const Text(AppTexts.signOutText),
-                onPressed: () {
-                  signOut(context);
-                },
-              )
             ],
           ),
         ),

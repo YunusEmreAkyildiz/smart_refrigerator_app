@@ -3,11 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smart_refrigerator_app/model/user_model.dart';
+import 'package:smart_refrigerator_app/services/functions.dart';
 import 'package:smart_refrigerator_app/shared/colors.dart';
 import 'package:smart_refrigerator_app/shared/icons.dart';
 import 'package:smart_refrigerator_app/shared/images.dart';
 import 'package:smart_refrigerator_app/shared/styles.dart';
 import 'package:smart_refrigerator_app/shared/texts.dart';
+import 'package:smart_refrigerator_app/shared/widgets/buttons.dart';
 import 'package:smart_refrigerator_app/shared/widgets/other_widgets.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -22,6 +24,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   UserModel loggedInUser = UserModel();
   String firstNameText = '';
   String lastNameText = '';
+  String nameText = '';
+  String emailText = '';
 
   @override
   void initState() {
@@ -35,8 +39,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         firstNameText =
             loggedInUser.firstName == null ? '' : '${loggedInUser.firstName}';
-        lastNameText +=
+        lastNameText =
             loggedInUser.lastName == null ? '' : '${loggedInUser.lastName}';
+        nameText = '$firstNameText $lastNameText';
+        emailText = loggedInUser.email == null ? '' : '${loggedInUser.email}';
       });
     });
   }
@@ -79,11 +85,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          '$firstNameText $lastNameText',
+                          nameText,
                           style: profileScreenNameTextStyle(context),
-                        ),
+                        )
                       ],
                     ),
+                    const SizedBox(height: 10),
+                    Text(emailText, style: faintTextStyle()),
+                    profileDividerWidget(),
+                    appButton(context, AppTexts.signOutText, () {
+                      signOut(context);
+                    }, icon: AppIcons.signOutIcon),
                   ],
                 ),
               )

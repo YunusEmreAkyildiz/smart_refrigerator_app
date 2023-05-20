@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:smart_refrigerator_app/model/fridge_data_model.dart';
 import 'package:smart_refrigerator_app/shared/colors.dart';
 import 'package:smart_refrigerator_app/model/user_model.dart';
 import 'package:smart_refrigerator_app/screens/home_screen.dart';
@@ -180,39 +181,88 @@ FutureBuilder? getImage() {
   );
 }
 
-Future<Map<String, dynamic>> downloadAndParseJsonFile() async {
+// Future<FridgeDataModel> downloadAndParseJsonFile() async {
+//   final storageRef = FirebaseStorage.instance.ref();
+//   final pathReference = storageRef.child('test_json.json');
+
+//   try {
+//     final url = await pathReference.getDownloadURL();
+//     final response = await http.get(Uri.parse(url));
+//     if (response.statusCode == 200) {
+//       final jsonData = json.decode(response.body) as Map<String, dynamic>;
+//       return FridgeDataModel.fromJson(jsonData);
+//     } else {
+//       throw Exception('Failed to download the JSON file');
+//     }
+//   } catch (e) {
+//     debugPrint(e.toString());
+//     throw Exception(e);
+//   }
+// }
+
+// FutureBuilder<FridgeDataModel> getJson() {
+//   return FutureBuilder<FridgeDataModel>(
+//     future: downloadAndParseJsonFile(),
+//     builder: (context, snapshot) {
+//       if (snapshot.connectionState == ConnectionState.waiting) {
+//         return const CircularProgressIndicator();
+//       }
+//       if (snapshot.hasError) {
+//         return Text('Error: ${snapshot.error}');
+//       }
+//       if (snapshot.hasData) {
+//         final fridgeData = snapshot.data!;
+//         return ListTile(
+//           title: Text(fridgeData.food.toString()),
+//           subtitle: Text(fridgeData.date.toString()),
+//           leading: const Icon(Icons.shopping_basket),
+//           trailing: const Icon(Icons.add),
+//         );
+//       }
+//       return const Text('No data available');
+//     },
+//   );
+// }
+
+Future<FridgeDataModel> downloadAndParseJsonFile() async {
   final storageRef = FirebaseStorage.instance.ref();
-  final pathReference = storageRef.child('test_json.json');
+  final pathReference = storageRef.child('HiFvucuVzVU4XBnuzyENc8IXOXq2-j.json');
 
   try {
     final url = await pathReference.getDownloadURL();
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
-      return jsonData;
+      final jsonData = json.decode(response.body) as Map<String, dynamic>;
+      return FridgeDataModel.fromJson(jsonData);
     } else {
       throw Exception('Failed to download the JSON file');
     }
   } catch (e) {
     debugPrint(e.toString());
-    return Future(() => {});
+    throw Exception(e);
   }
 }
 
-FutureBuilder? getJson() {
-  return FutureBuilder<Map<String, dynamic>>(
-      future: downloadAndParseJsonFile(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        }
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-        if (snapshot.hasData) {
-          final jsonData = snapshot.data!;
-          return Text(jsonData.toString());
-        }
-        return const Text('No data available');
-      });
+FutureBuilder<FridgeDataModel> getJson() {
+  return FutureBuilder<FridgeDataModel>(
+    future: downloadAndParseJsonFile(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return CircularProgressIndicator();
+      }
+      if (snapshot.hasError) {
+        return Text('Error: ${snapshot.error}');
+      }
+      if (snapshot.hasData) {
+        final fridgeData = snapshot.data!;
+        return ListTile(
+          title: Text(fridgeData.food.toString()),
+          subtitle: Text(fridgeData.date.toString()),
+          leading: Icon(Icons.shopping_basket),
+          trailing: Icon(Icons.add),
+        );
+      }
+      return Text('No data available');
+    },
+  );
 }
