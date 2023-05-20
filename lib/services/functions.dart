@@ -134,10 +134,11 @@ Future signOut(BuildContext context) async {
   await FirebaseAuth.instance.signOut().then((value) => {
         Fluttertoast.showToast(
             msg: 'Successfully signed out',
-            backgroundColor: AppColors.toastSuccessfulColor)
+            backgroundColor: AppColors.toastSuccessfulColor),
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const SignInScreen()),
+            (route) => false)
       });
-  Navigator.of(context)
-      .pushReplacement(MaterialPageRoute(builder: (context) => SignInScreen()));
 }
 
 Future<String> getImageUrl() async {
@@ -224,9 +225,9 @@ FutureBuilder? getImage() {
 //   );
 // }
 
-Future<FridgeDataModel> downloadAndParseJsonFile() async {
+Future<FridgeDataModel> downloadAndParseJsonFile(String userId) async {
   final storageRef = FirebaseStorage.instance.ref();
-  final pathReference = storageRef.child('HiFvucuVzVU4XBnuzyENc8IXOXq2-j.json');
+  final pathReference = storageRef.child('$userId-j.json');
 
   try {
     final url = await pathReference.getDownloadURL();
@@ -243,12 +244,12 @@ Future<FridgeDataModel> downloadAndParseJsonFile() async {
   }
 }
 
-FutureBuilder<FridgeDataModel> getJson() {
+FutureBuilder<FridgeDataModel> getJson(String userId) {
   return FutureBuilder<FridgeDataModel>(
-    future: downloadAndParseJsonFile(),
+    future: downloadAndParseJsonFile(userId),
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
-        return CircularProgressIndicator();
+        return const CircularProgressIndicator();
       }
       if (snapshot.hasError) {
         return Text('Error: ${snapshot.error}');
@@ -258,11 +259,11 @@ FutureBuilder<FridgeDataModel> getJson() {
         return ListTile(
           title: Text(fridgeData.food.toString()),
           subtitle: Text(fridgeData.date.toString()),
-          leading: Icon(Icons.shopping_basket),
-          trailing: Icon(Icons.add),
+          leading: const Icon(Icons.shopping_basket),
+          trailing: const Icon(Icons.add),
         );
       }
-      return Text('No data available');
+      return const Text('No data available');
     },
   );
 }

@@ -22,6 +22,6 @@ class MyApp extends StatelessWidget {
           primarySwatch: AppColors.appPrimarySwatch,
           //bottomAppBarColor: AppColors.appPrimarySwatch,
         ),
-        home: SignInScreen());
+        home: const SignInScreen());
   }
 }

@@ -93,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
               appButton(context, 'Get JSON', () {
                 debugPrint('getJson CALLED!');
                 setState(() {
-                  changeWidget = getJson()!;
+                  changeWidget = getJson(loggedInUser.userId.toString());
                 });
                 debugPrint('getJson FINISHED!');
               }),
