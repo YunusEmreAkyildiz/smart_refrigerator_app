@@ -14,6 +14,9 @@ class AppTexts {
       "Are you sure you want to sign out?";
   static const String alertDialogSignOutCancelText = "Cancel";
   static const String alertDialogSignOutConfirmedText = "Yes";
+  static const String failedToDownloadJson1 = 'Failed to download the JSON-1 file';
+  static const String failedToDownloadJson2 = 'Failed to download the JSON-2 file';
+  static const String noDataAvailable = 'No data available';
 }
 
 class AppRegExps {

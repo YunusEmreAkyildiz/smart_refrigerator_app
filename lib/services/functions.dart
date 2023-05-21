@@ -182,18 +182,31 @@ FutureBuilder? getImage() {
   );
 }
 
-Future<FridgeDataModel> downloadAndParseJsonFile(String userId) async {
-  debugPrint('1');
+Future<UserModel> getUser(String userId) async {
+  // Get the current user's document from Cloud Firestore
+  final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
+  final userSnapshot = await userDoc.get();
+
+  // Get the current food list from the user's document
+  final userMap = userSnapshot.data();
+  UserModel user;
+  if (userMap != null) {
+    user = UserModel.fromMap(userMap);
+  } else {
+    throw Exception('User document not found');
+  }
+  return user;
+}
+
+Future<FridgeDataModel> getFridgeDataModeFromJson(String userId) async {
   FridgeDataModel fridgeDataModel1;
   FridgeDataModel fridgeDataModel2;
   // Retrieve the JSON documents from Firebase Storage
   final storageRef = FirebaseStorage.instance.ref();
   final pathReference1 =
       storageRef.child('HiFvucuVzVU4XBnuzyENc8IXOXq2-j.json');
-  debugPrint('2');
   final pathReference2 =
       storageRef.child('HiFvucuVzVU4XBnuzyENc8IXOXq2-j2.json');
-  debugPrint('3');
 
   try {
     // Parse the JSON documents
@@ -201,69 +214,66 @@ Future<FridgeDataModel> downloadAndParseJsonFile(String userId) async {
     final url2 = await pathReference2.getDownloadURL();
     final response1 = await http.get(Uri.parse(url1));
     final response2 = await http.get(Uri.parse(url2));
-    debugPrint('4');
 
     // Parsing JSON-1 document
     if (response1.statusCode == 200) {
-      debugPrint('a1');
       final jsonData1 = json.decode(response1.body) as Map<dynamic, dynamic>;
-      debugPrint('b1');
       fridgeDataModel1 = FridgeDataModel.fromJson(jsonData1);
-      debugPrint('c1');
     } else {
-      throw Exception('Failed to download the JSON-1 file');
+      throw Exception(AppTexts.failedToDownloadJson1);
     }
 
     // Parsing JSON-2 document
     if (response1.statusCode == 200) {
-      debugPrint('a2');
       final jsonData2 = json.decode(response2.body) as Map<dynamic, dynamic>;
-      debugPrint('b2');
       fridgeDataModel2 = FridgeDataModel.fromJson(jsonData2);
-      debugPrint('c2');
     } else {
-      throw Exception('Failed to download the JSON-2 file');
+      throw Exception(AppTexts.failedToDownloadJson2);
     }
-    debugPrint('5');
 
+    // Assign JSON-2's foodChangTimeMinute to JSON-1's, in order to do future ops with only one JSON document
     fridgeDataModel1.foodChangeTimeMinute =
         fridgeDataModel2.foodChangeTimeMinute;
-    debugPrint('6');
 
-    // Get the current user's document from Cloud Firestore
-    final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
-    final userSnapshot = await userDoc.get();
-    debugPrint('7');
-    // Get the current food list from the user's document
-    final userMap = userSnapshot.data();
-    UserModel user;
-    if (userMap != null) {
-      user = UserModel.fromMap(userMap);
-    } else {
-      throw Exception('User document not found');
-    }
-    debugPrint('8-1');
+    return fridgeDataModel1;
+  } catch (e) {
+    debugPrint(e.toString());
+    throw Exception(e);
+  }
+}
+
+void updateUserDocument(UserModel updatedUser) async {
+  final userDoc =
+      FirebaseFirestore.instance.collection('users').doc(updatedUser.userId);
+  await userDoc.update(updatedUser.toMap());
+}
+
+Future<FridgeDataModel> compareFoodLists(String userId) async {
+  final fridgeDataModel = await getFridgeDataModeFromJson(userId);
+  try {
+    final user = await getUser(userId);
     final currentFoodList = user.food ?? [];
-    debugPrint('8');
+
     // Compare the food list from the JSON document with the current food list
-    final newFoodList = fridgeDataModel1.food;
+    final newFoodList = fridgeDataModel.food;
     final changedFoodList =
         newFoodList!.where((food) => !currentFoodList.contains(food)).toList();
-    debugPrint('9');
+
     // Update the user's document if there are changes in the food list
     if (changedFoodList.isNotEmpty) {
       user.food = newFoodList;
       final updatedUserModel = user;
-      await userDoc.update(updatedUserModel.toMap());
+      updateUserDocument(updatedUserModel);
     }
-    debugPrint('10');
+
     // Show the changed food list and its duration in the fridge
     debugPrint('Firestore Food List: $currentFoodList');
     debugPrint('JSON Food List: $newFoodList');
     debugPrint('Changed Food List: $changedFoodList');
     debugPrint(
-        'Food Duration (in minutes): ${fridgeDataModel1.foodChangeTimeMinute}');
-    return fridgeDataModel1;
+        'Food Duration (in minutes): ${fridgeDataModel.foodChangeTimeMinute}');
+
+    return fridgeDataModel;
   } catch (e) {
     debugPrint(e.toString());
     throw Exception(e);
@@ -272,7 +282,7 @@ Future<FridgeDataModel> downloadAndParseJsonFile(String userId) async {
 
 FutureBuilder<FridgeDataModel> getJson(String userId) {
   return FutureBuilder<FridgeDataModel>(
-    future: downloadAndParseJsonFile(userId),
+    future: compareFoodLists(userId),
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
         return const CircularProgressIndicator();
@@ -289,7 +299,7 @@ FutureBuilder<FridgeDataModel> getJson(String userId) {
           trailing: const Icon(Icons.add),
         );
       }
-      return const Text('No data available');
+      return const Text(AppTexts.noDataAvailable);
     },
   );
 }
