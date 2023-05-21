@@ -143,7 +143,7 @@ Future signOut(BuildContext context) async {
 
 Future<String> getImageUrl() async {
   final storageRef = FirebaseStorage.instance.ref();
-  final pathReference = storageRef.child("${AppTexts.userAyseOzgurId}-i.jpg");
+  final pathReference = storageRef.child("${AppTexts.userAyseOzgurId}-p.jpg");
   /****************************************************************/
   // A different/alternative approach
   // final gsReference = FirebaseStorage.instance.refFromURL(
@@ -203,10 +203,9 @@ Future<FridgeDataModel> getFridgeDataModelFromJson(String userId) async {
 
   // Retrieve the JSON documents from Firebase Storage
   final storageRef = FirebaseStorage.instance.ref();
-  final pathReference1 =
-      storageRef.child('HiFvucuVzVU4XBnuzyENc8IXOXq2-j.json');
+  final pathReference1 = storageRef.child('${AppTexts.userAyseOzgurId}-j.json');
   final pathReference2 =
-      storageRef.child('HiFvucuVzVU4XBnuzyENc8IXOXq2-j2.json');
+      storageRef.child('${AppTexts.userAyseOzgurId}-j2.json');
 
   try {
     // Parse the JSON documents
@@ -256,8 +255,13 @@ Future<FridgeDataModel> compareFoodLists(String userId) async {
 
     // Compare the food list from the JSON document with the current food list
     final newFoodList = fridgeDataModel.food;
-    final changedFoodList =
+    final foodToAddList =
         newFoodList!.where((food) => !currentFoodList.contains(food)).toList();
+    final foodToRemoveList =
+        currentFoodList.where((food) => !newFoodList.contains(food)).toList();
+    final changedFoodList = foodToAddList + foodToRemoveList;
+    debugPrint('foodToAddList: $foodToAddList');
+    debugPrint('foodToRemoveList: $foodToRemoveList');
 
     // Update the user's document if there are changes in the food list
     if (changedFoodList.isNotEmpty) {
