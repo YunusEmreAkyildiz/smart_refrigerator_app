@@ -254,12 +254,27 @@ Future<FridgeDataModel> compareFoodLists(String userId) async {
     final currentFoodList = user.food ?? [];
 
     // Compare the food list from the JSON document with the current food list
-    final newFoodList = fridgeDataModel.food;
-    final foodToAddList =
-        newFoodList!.where((food) => !currentFoodList.contains(food)).toList();
-    final foodToRemoveList =
-        currentFoodList.where((food) => !newFoodList.contains(food)).toList();
-    final changedFoodList = foodToAddList + foodToRemoveList;
+    final newFoodList = fridgeDataModel.food!;
+    List<String> changedFoodList = [];
+    List<String> foodToAddList = [];
+    List<String> foodToRemoveList = [];
+
+    // Finding items to add
+    for (var food in newFoodList) {
+      if (currentFoodList.contains(food)) {
+        currentFoodList.remove(food);
+      } else {
+        foodToAddList.add(food);
+        changedFoodList.add(food);
+      }
+    }
+
+    // Finding items to remove
+    for (var food in currentFoodList) {
+      foodToRemoveList.add(food);
+      changedFoodList.add(food);
+    }
+
     debugPrint('foodToAddList: $foodToAddList');
     debugPrint('foodToRemoveList: $foodToRemoveList');
 
@@ -271,7 +286,7 @@ Future<FridgeDataModel> compareFoodLists(String userId) async {
     }
 
     // Show the changed food list and its duration in the fridge
-    debugPrint('Firestore Food List: $currentFoodList');
+    debugPrint('Current Food List After Ops: $currentFoodList');
     debugPrint('JSON Food List: $newFoodList');
     debugPrint('Changed Food List: $changedFoodList');
     debugPrint(
