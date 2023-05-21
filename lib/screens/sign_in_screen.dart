@@ -77,7 +77,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     appButton(context, 'Sign In', () {
                       signIn(emailController.text, passwordController.text,
                           _formKey.currentState, _formKey, _auth, context);
-                    }),
+                    }, autofocus: true),
                     const SizedBox(height: 15),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

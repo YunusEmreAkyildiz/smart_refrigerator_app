@@ -29,7 +29,11 @@ class _HomeScreenState extends State<HomeScreen> {
         .doc(user!.uid)
         .get()
         .then((value) {
-      loggedInUser = UserModel.fromMap(value.data());
+      if (value.data() != null) {
+        loggedInUser = UserModel.fromMap(value.data());
+      } else {
+        throw Exception('User document not found');
+      }
       setState(() {});
     });
   }
@@ -94,6 +98,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 debugPrint('getJson CALLED!');
                 setState(() {
                   changeWidget = getJson(loggedInUser.userId.toString());
+                  // For test purposes, using static ID
+                  //changeWidget = getJson('HiFvucuVzVU4XBnuzyENc8IXOXq2');
+                  debugPrint(loggedInUser.userId.toString());
                 });
                 debugPrint('getJson FINISHED!');
               }),

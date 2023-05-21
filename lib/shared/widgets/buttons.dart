@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smart_refrigerator_app/shared/colors.dart';
 
 Material appButton(BuildContext context, String text, Function()? onPressed,
-    {IconData? icon}) {
+    {IconData? icon, bool autofocus = false}) {
   return Material(
     elevation: 5,
     borderRadius: BorderRadius.circular(30),
@@ -11,6 +11,7 @@ Material appButton(BuildContext context, String text, Function()? onPressed,
       padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
       minWidth: MediaQuery.of(context).size.width,
       onPressed: onPressed,
+      autofocus: autofocus,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
