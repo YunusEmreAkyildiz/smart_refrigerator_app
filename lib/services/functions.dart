@@ -186,21 +186,21 @@ Future<UserModel> getUser(String userId) async {
   // Get the current user's document from Cloud Firestore
   final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
   final userSnapshot = await userDoc.get();
-
-  // Get the current food list from the user's document
   final userMap = userSnapshot.data();
   UserModel user;
+
   if (userMap != null) {
     user = UserModel.fromMap(userMap);
   } else {
-    throw Exception('User document not found');
+    throw Exception(AppTexts.userDocumentNotFound);
   }
   return user;
 }
 
-Future<FridgeDataModel> getFridgeDataModeFromJson(String userId) async {
+Future<FridgeDataModel> getFridgeDataModelFromJson(String userId) async {
   FridgeDataModel fridgeDataModel1;
   FridgeDataModel fridgeDataModel2;
+
   // Retrieve the JSON documents from Firebase Storage
   final storageRef = FirebaseStorage.instance.ref();
   final pathReference1 =
@@ -249,7 +249,7 @@ void updateUserDocument(UserModel updatedUser) async {
 }
 
 Future<FridgeDataModel> compareFoodLists(String userId) async {
-  final fridgeDataModel = await getFridgeDataModeFromJson(userId);
+  final fridgeDataModel = await getFridgeDataModelFromJson(userId);
   try {
     final user = await getUser(userId);
     final currentFoodList = user.food ?? [];
