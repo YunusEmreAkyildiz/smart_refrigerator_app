@@ -285,7 +285,7 @@ Future<FridgeDataModel> compareFoodLists(String userId) async {
       updateUserDocument(updatedUserModel);
     }
 
-    // Show the changed food list and its duration in the fridge
+    // Show the food lists and duration in the fridge on debug console
     debugPrint('Current Food List After Ops: $currentFoodList');
     debugPrint('JSON Food List: $newFoodList');
     debugPrint('Changed Food List: $changedFoodList');
