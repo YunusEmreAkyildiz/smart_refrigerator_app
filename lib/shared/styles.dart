@@ -46,6 +46,18 @@ TextStyle? foodDurationTextStyle() {
       fontWeight: FontWeight.w500);
 }
 
+TextStyle? aboutTitleTextStyle(BuildContext context) {
+  return TextStyle(
+      fontSize: (MediaQuery.of(context).size.aspectRatio * 35),
+      fontWeight: FontWeight.w400);
+}
+
+TextStyle? aboutMainTextStyle(BuildContext context) {
+  return TextStyle(
+      fontSize: MediaQuery.of(context).size.aspectRatio * 27,
+      color: Colors.black.withOpacity(0.78));
+}
+
 double appScreenPadding(BuildContext context) {
   return (MediaQuery.of(context).size.aspectRatio * 20);
 }

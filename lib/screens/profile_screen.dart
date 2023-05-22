@@ -87,6 +87,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(height: 10),
                         Text(emailText, style: faintTextStyle()),
                         profileDividerWidget(),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 0, right: 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  AppIcons.aboutTitleIcon(context),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    AppTexts.profileScreenAboutTitle,
+                                    style: aboutTitleTextStyle(context),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                AppTexts.profileScreenAboutText,
+                                style: aboutMainTextStyle(context),
+                              ),
+                            ],
+                          ),
+                        ),
+                        profileDividerWidget(),
                       ],
                     ),
                     Align(

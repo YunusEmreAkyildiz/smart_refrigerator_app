@@ -24,6 +24,10 @@ class AppTexts {
   static const String currentFoodListTitle = "Your fridge's content:";
   static const String foodToAddListTitle = 'Newly added food:';
   static const String foodToRemoveListTitle = 'Recently taken out food:';
+  static const String profileScreenAboutTitle = 'About';
+  static const String profileScreenAboutText =
+      'Made for 2022-2023 Istanbul University-Cerrahpaşa Computer Engineering final project by '
+      'Yunus Emre Akyıldız (app and database developer) and Zeynel Doruk (embedded system and image processing developer).';
 
   static foodDurationMessage(int minute) {
     switch (minute) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_refrigerator_app/shared/colors.dart';
 
 class AppIcons {
   static const IconData emailIcon = Icons.mail;
@@ -25,4 +26,11 @@ class AppIcons {
     Icons.cloud_download,
     size: 120,
   );
+  static aboutTitleIcon(BuildContext context) {
+    return Icon(
+      Icons.info,
+      color: AppColors.profileScreenAboutTitleColor,
+      size: (MediaQuery.of(context).size.aspectRatio * 45),
+    );
+  }
 }
