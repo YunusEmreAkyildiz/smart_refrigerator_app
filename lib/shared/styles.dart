@@ -31,6 +31,29 @@ TextStyle? profileScreenNameTextStyle(BuildContext context) {
       color: AppColors.homeScreenMainTextColor);
 }
 
+TextStyle? listTitleTextStyle() {
+  return const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
+}
+
+TextStyle? emptyFridgeTextStyle() {
+  return const TextStyle(fontSize: 18);
+}
+
+TextStyle? foodDurationTextStyle() {
+  return TextStyle(
+      fontSize: 18,
+      color: AppColors.faintTextColor,
+      fontWeight: FontWeight.w500);
+}
+
 double appScreenPadding(BuildContext context) {
   return (MediaQuery.of(context).size.aspectRatio * 20);
+}
+
+EdgeInsets itemLeadingAndTitlePadding() {
+  return const EdgeInsets.symmetric(horizontal: 8.0);
+}
+
+double appListTileHorizontalTitleGap() {
+  return 5;
 }

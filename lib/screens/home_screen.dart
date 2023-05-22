@@ -93,7 +93,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   debugPrint('getImage CALLED!');
                   changeWidget1 = getImage()!;
                   debugPrint('getImage FINISHED, showFridge CALLED!');
-                  changeWidget2 = showFridge(loggedInUser.userId.toString());
+                  changeWidget2 =
+                      showFridge(loggedInUser.userId.toString());
                   debugPrint('showFridge FINISHED!');
                 });
               }),

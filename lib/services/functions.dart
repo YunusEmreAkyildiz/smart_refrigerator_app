@@ -9,6 +9,8 @@ import 'package:smart_refrigerator_app/shared/colors.dart';
 import 'package:smart_refrigerator_app/model/user_model.dart';
 import 'package:smart_refrigerator_app/screens/home_screen.dart';
 import 'package:smart_refrigerator_app/screens/sign_in_screen.dart';
+import 'package:smart_refrigerator_app/shared/icons.dart';
+import 'package:smart_refrigerator_app/shared/styles.dart';
 import 'package:smart_refrigerator_app/shared/texts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -317,17 +319,16 @@ Column showLists(FoodListModel foodListModel) {
     children: [
       if (foodListModel.newFoodList.isEmpty)
         Text(
-          'The fridge is empty',
-          style: TextStyle(fontSize: 18),
+          AppTexts.emptyFridgeMessage,
+          style: emptyFridgeTextStyle(),
         )
       else
         Column(
           children: [
             Text(
-              'Current Food List:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              AppTexts.currentFoodListTitle,
+              style: listTitleTextStyle(),
             ),
-            SizedBox(height: 10),
             ListView.builder(
               shrinkWrap: true,
               itemCount: foodListModel.newFoodList.length,
@@ -335,7 +336,10 @@ Column showLists(FoodListModel foodListModel) {
                 final food =
                     capitalizeFirstLetter(foodListModel.newFoodList[index]);
                 return ListTile(
+                  leading: AppIcons.fridgeContentItemIcon,
                   title: Text(food),
+                  contentPadding: itemLeadingAndTitlePadding(),
+                  horizontalTitleGap: appListTileHorizontalTitleGap(),
                 );
               },
             ),
@@ -345,10 +349,9 @@ Column showLists(FoodListModel foodListModel) {
         Column(
           children: [
             Text(
-              'Newly Added Food List:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              AppTexts.foodToAddListTitle,
+              style: listTitleTextStyle(),
             ),
-            SizedBox(height: 10),
             ListView.builder(
               shrinkWrap: true,
               itemCount: foodListModel.foodToAddList.length,
@@ -356,11 +359,10 @@ Column showLists(FoodListModel foodListModel) {
                 final food =
                     capitalizeFirstLetter(foodListModel.foodToAddList[index]);
                 return ListTile(
-                  leading: Icon(
-                    Icons.add,
-                    color: Colors.green,
-                  ),
+                  leading: AppIcons.addedFoodIcon,
                   title: Text(food),
+                  contentPadding: itemLeadingAndTitlePadding(),
+                  horizontalTitleGap: appListTileHorizontalTitleGap(),
                 );
               },
             ),
@@ -370,10 +372,9 @@ Column showLists(FoodListModel foodListModel) {
         Column(
           children: [
             Text(
-              'Removed Food List:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              AppTexts.foodToRemoveListTitle,
+              style: listTitleTextStyle(),
             ),
-            SizedBox(height: 10),
             ListView.builder(
               shrinkWrap: true,
               itemCount: foodListModel.foodToRemoveList.length,
@@ -381,11 +382,10 @@ Column showLists(FoodListModel foodListModel) {
                 final food = capitalizeFirstLetter(
                     foodListModel.foodToRemoveList[index]);
                 return ListTile(
-                  leading: Icon(
-                    Icons.remove,
-                    color: Colors.red,
-                  ),
+                  leading: AppIcons.removedFoodIcon,
                   title: Text(food),
+                  contentPadding: itemLeadingAndTitlePadding(),
+                  horizontalTitleGap: appListTileHorizontalTitleGap(),
                 );
               },
             ),
@@ -393,8 +393,8 @@ Column showLists(FoodListModel foodListModel) {
         ),
       if (foodListModel.foodChangeTimeMinute != 0)
         Text(
-          'Food Duration (in minutes): ${foodListModel.foodChangeTimeMinute}',
-          style: TextStyle(fontSize: 18),
+          AppTexts.foodDurationMessage(foodListModel.foodChangeTimeMinute),
+          style: foodDurationTextStyle(),
         ),
     ],
   );
@@ -403,7 +403,7 @@ Column showLists(FoodListModel foodListModel) {
 FutureBuilder showFridge(String userId) {
   return FutureBuilder<FoodListModel>(
     future: compareFoodLists(userId),
-    builder: (context, snapshot) {
+    builder: (futureContext, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
         return const CircularProgressIndicator();
       }

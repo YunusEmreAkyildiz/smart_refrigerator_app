@@ -20,6 +20,21 @@ class AppTexts {
       'Failed to download the JSON-2 file';
   static const String noDataAvailable = 'No data available';
   static const String userDocumentNotFound = 'User document not found';
+  static const String emptyFridgeMessage = 'Your fridge looks empty :(';
+  static const String currentFoodListTitle = "Your fridge's content:";
+  static const String foodToAddListTitle = 'Newly added food:';
+  static const String foodToRemoveListTitle = 'Recently taken out food:';
+
+  static foodDurationMessage(int minute) {
+    switch (minute) {
+      case 0:
+        return '*The content has not changed for the last minute';
+      case 1:
+        return '*The content has not changed for $minute minute';
+      default:
+        return '*The content has not changed for $minute minutes';
+    }
+  }
 }
 
 class AppRegExps {
