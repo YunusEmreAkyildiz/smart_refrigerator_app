@@ -3,7 +3,7 @@ class AppTexts {
   static const String signUpPageAppBarTitle = 'Join FridgeTracker Now!';
   static const String homeScreenAppBarTitle = 'FridgeTracker';
   static const String profileScreenAppBarTitle = 'My Profile';
-  static const String getFridgePhoto = 'Show my fridge!';
+  static const String showFridgeButtonText = 'Show my fridge!';
   static const String homeScreenMainText =
       'We hope you have a great day! Would you like to take a look inside of your fridge?';
   static const String signOutText = 'Sign Out';
@@ -14,8 +14,10 @@ class AppTexts {
       "Are you sure you want to sign out?";
   static const String alertDialogSignOutCancelText = "Cancel";
   static const String alertDialogSignOutConfirmedText = "Yes";
-  static const String failedToDownloadJson1 = 'Failed to download the JSON-1 file';
-  static const String failedToDownloadJson2 = 'Failed to download the JSON-2 file';
+  static const String failedToDownloadJson1 =
+      'Failed to download the JSON-1 file';
+  static const String failedToDownloadJson2 =
+      'Failed to download the JSON-2 file';
   static const String noDataAvailable = 'No data available';
   static const String userDocumentNotFound = 'User document not found';
 }

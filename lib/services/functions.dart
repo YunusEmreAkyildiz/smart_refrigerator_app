@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:smart_refrigerator_app/model/food_list_model.dart';
 import 'package:smart_refrigerator_app/model/fridge_data_model.dart';
 import 'package:smart_refrigerator_app/shared/colors.dart';
 import 'package:smart_refrigerator_app/model/user_model.dart';
@@ -247,7 +248,7 @@ void updateUserDocument(UserModel updatedUser) async {
   await userDoc.update(updatedUser.toMap());
 }
 
-Future<FridgeDataModel> compareFoodLists(String userId) async {
+Future<FoodListModel> compareFoodLists(String userId) async {
   final fridgeDataModel = await getFridgeDataModelFromJson(userId);
   try {
     final user = await getUser(userId);
@@ -292,15 +293,115 @@ Future<FridgeDataModel> compareFoodLists(String userId) async {
     debugPrint(
         'Food Duration (in minutes): ${fridgeDataModel.foodChangeTimeMinute}');
 
-    return fridgeDataModel;
+    final foodListModel = FoodListModel(
+        newFoodList: newFoodList,
+        foodToAddList: foodToAddList,
+        foodToRemoveList: foodToRemoveList,
+        foodChangeTimeMinute: fridgeDataModel.foodChangeTimeMinute!,
+        changedFoodList: changedFoodList);
+
+    return foodListModel;
   } catch (e) {
     debugPrint(e.toString());
     throw Exception(e);
   }
 }
 
-FutureBuilder<FridgeDataModel> getJson(String userId) {
-  return FutureBuilder<FridgeDataModel>(
+String capitalizeFirstLetter(String text) {
+  return text.substring(0, 1).toUpperCase() + text.substring(1);
+}
+
+Column showLists(FoodListModel foodListModel) {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      if (foodListModel.newFoodList.isEmpty)
+        Text(
+          'The fridge is empty',
+          style: TextStyle(fontSize: 18),
+        )
+      else
+        Column(
+          children: [
+            Text(
+              'Current Food List:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: foodListModel.newFoodList.length,
+              itemBuilder: (context, index) {
+                final food =
+                    capitalizeFirstLetter(foodListModel.newFoodList[index]);
+                return ListTile(
+                  title: Text(food),
+                );
+              },
+            ),
+          ],
+        ),
+      if (foodListModel.foodToAddList.isNotEmpty)
+        Column(
+          children: [
+            Text(
+              'Newly Added Food List:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: foodListModel.foodToAddList.length,
+              itemBuilder: (context, index) {
+                final food =
+                    capitalizeFirstLetter(foodListModel.foodToAddList[index]);
+                return ListTile(
+                  leading: Icon(
+                    Icons.add,
+                    color: Colors.green,
+                  ),
+                  title: Text(food),
+                );
+              },
+            ),
+          ],
+        ),
+      if (foodListModel.foodToRemoveList.isNotEmpty)
+        Column(
+          children: [
+            Text(
+              'Removed Food List:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: foodListModel.foodToRemoveList.length,
+              itemBuilder: (context, index) {
+                final food = capitalizeFirstLetter(
+                    foodListModel.foodToRemoveList[index]);
+                return ListTile(
+                  leading: Icon(
+                    Icons.remove,
+                    color: Colors.red,
+                  ),
+                  title: Text(food),
+                );
+              },
+            ),
+          ],
+        ),
+      if (foodListModel.foodChangeTimeMinute != 0)
+        Text(
+          'Food Duration (in minutes): ${foodListModel.foodChangeTimeMinute}',
+          style: TextStyle(fontSize: 18),
+        ),
+    ],
+  );
+}
+
+FutureBuilder showFridge(String userId) {
+  return FutureBuilder<FoodListModel>(
     future: compareFoodLists(userId),
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -311,12 +412,7 @@ FutureBuilder<FridgeDataModel> getJson(String userId) {
       }
       if (snapshot.hasData) {
         final fridgeData = snapshot.data!;
-        return ListTile(
-          title: Text(fridgeData.food.toString()),
-          subtitle: Text(fridgeData.date.toString()),
-          leading: const Icon(Icons.shopping_basket),
-          trailing: const Icon(Icons.add),
-        );
+        return showLists(fridgeData);
       }
       return const Text(AppTexts.noDataAvailable);
     },

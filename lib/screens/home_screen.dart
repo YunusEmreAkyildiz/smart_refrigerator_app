@@ -19,7 +19,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
-  Widget changeWidget = AppIcons.imageReplacerIcon;
+  Widget changeWidget1 = AppIcons.imageReplacerIcon;
+  Widget changeWidget2 = const SizedBox();
 
   @override
   void initState() {
@@ -73,9 +74,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: welcomeTextStyle(context),
                 ),
               ),
-              // const SizedBox(height: 10),
-              // Text(loggedInUser.email == null ? '...' : '${loggedInUser.email}',
-              //     style: faintTextStyle()),
               const SizedBox(height: 15),
               Text(
                 AppTexts.homeScreenMainText,
@@ -83,26 +81,21 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 15),
               Center(
-                child: changeWidget,
+                child: changeWidget1,
+              ),
+              const SizedBox(height: 30),
+              Center(
+                child: changeWidget2,
               ),
               const SizedBox(height: 15),
-              appButton(context, AppTexts.getFridgePhoto, () {
-                debugPrint('getImage CALLED!');
+              appButton(context, AppTexts.showFridgeButtonText, () {
                 setState(() {
-                  changeWidget = getImage()!;
+                  debugPrint('getImage CALLED!');
+                  changeWidget1 = getImage()!;
+                  debugPrint('getImage FINISHED, showFridge CALLED!');
+                  changeWidget2 = showFridge(loggedInUser.userId.toString());
+                  debugPrint('showFridge FINISHED!');
                 });
-                debugPrint('getImage FINISHED!');
-              }),
-              const SizedBox(height: 15),
-              appButton(context, 'Get JSON', () {
-                debugPrint('getJson CALLED!');
-                setState(() {
-                  changeWidget = getJson(loggedInUser.userId.toString());
-                  // For test purposes, using static ID
-                  //changeWidget = getJson('HiFvucuVzVU4XBnuzyENc8IXOXq2');
-                  debugPrint(loggedInUser.userId.toString());
-                });
-                debugPrint('getJson FINISHED!');
               }),
             ],
           ),

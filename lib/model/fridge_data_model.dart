@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class FridgeDataModel {
   List<String>? food = [''];
   final DateTime? date;
