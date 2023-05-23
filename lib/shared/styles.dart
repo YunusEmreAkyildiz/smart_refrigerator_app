@@ -11,7 +11,8 @@ TextStyle? signUpPageTitleStyle() {
 TextStyle? welcomeTextStyle(BuildContext context) {
   return TextStyle(
       fontSize: (MediaQuery.of(context).size.aspectRatio * 65),
-      fontWeight: FontWeight.bold);
+      fontWeight: FontWeight.w500,
+      color: AppColors.homeScreenWelcomeMessageTitleColor);
 }
 
 TextStyle? faintTextStyle() {

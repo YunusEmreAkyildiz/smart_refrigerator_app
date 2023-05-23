@@ -7,9 +7,11 @@ class AppColors {
   static Color? toastErrorColor = Colors.red[900];
   static Color? toastSuccessfulColor = Colors.green[700];
   static Color? faintTextColor = Colors.black54;
+  static Color homeScreenWelcomeMessageTitleColor = Colors.grey.shade800;
   static Color? homeScreenMainTextColor = Colors.black.withOpacity(0.78);
   static Color? profileScreenNameTextColor = Colors.black.withOpacity(0.78);
   static Color profileScreenAboutTitleColor = Colors.black87;
+  static const Color fridgeImageBorderColor = Colors.grey;
   static const MaterialColor appPrimarySwatch = MaterialColor(0xff471AA0, {
     50: Color.fromRGBO(71, 26, 160, .1),
     100: Color.fromRGBO(71, 26, 160, .2),

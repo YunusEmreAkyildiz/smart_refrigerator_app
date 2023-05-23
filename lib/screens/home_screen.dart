@@ -65,6 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             //crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 5),
               SizedBox(
                 width: (MediaQuery.of(context).size.width),
                 child: Text(
@@ -83,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Center(
                 child: changeWidget1,
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 10),
               Center(
                 child: changeWidget2,
               ),
@@ -93,11 +94,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   debugPrint('getImage CALLED!');
                   changeWidget1 = getImage()!;
                   debugPrint('getImage FINISHED, showFridge CALLED!');
-                  changeWidget2 =
-                      showFridge(loggedInUser.userId.toString());
+                  changeWidget2 = showFridge(loggedInUser.userId.toString());
                   debugPrint('showFridge FINISHED!');
                 });
               }),
+              const SizedBox(height: 15)
             ],
           ),
         ),

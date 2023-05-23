@@ -8,3 +8,11 @@ Widget profileDividerWidget() {
     thickness: 0.2,
   );
 }
+
+Widget foodDataDividerWidget() {
+  return const Divider(
+    color: AppColors.primaryAppColor,
+    height: 35,
+    thickness: 0.25,
+  );
+}

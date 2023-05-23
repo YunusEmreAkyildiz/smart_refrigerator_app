@@ -10,10 +10,13 @@ import 'package:smart_refrigerator_app/model/user_model.dart';
 import 'package:smart_refrigerator_app/screens/home_screen.dart';
 import 'package:smart_refrigerator_app/screens/sign_in_screen.dart';
 import 'package:smart_refrigerator_app/shared/icons.dart';
+import 'package:smart_refrigerator_app/shared/images.dart';
 import 'package:smart_refrigerator_app/shared/styles.dart';
 import 'package:smart_refrigerator_app/shared/texts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:smart_refrigerator_app/shared/widgets/other_widgets.dart';
 
 Future signIn(String email, String password, FormState? currentState, formKey,
     FirebaseAuth auth, BuildContext context) async {
@@ -177,8 +180,8 @@ FutureBuilder? getImage() {
         return Text('Error: ${snapshot.error}');
       }
       if (snapshot.hasData) {
-        String imageURL = snapshot.data.toString();
-        return Image.network(imageURL);
+        String imageUrl = snapshot.data.toString();
+        return AppImages.fridgeImage(imageUrl);
       }
       return const Text(AppTexts.noImageFoundText);
     },
@@ -327,6 +330,26 @@ Map<String, int> calculateItemQuantities(List<String> items) {
   return quantities;
 }
 
+Widget buildFoodListTileItem(String item, int quantity, Icon leading,
+    EdgeInsets contentPadding, double horizontalTitleGap) {
+  if (quantity > 1) {
+    return ListTile(
+      leading: leading,
+      title: Text(capitalizeFirstLetter(item)),
+      subtitle: Text(' x$quantity'),
+      contentPadding: contentPadding,
+      horizontalTitleGap: horizontalTitleGap,
+    );
+  } else {
+    return ListTile(
+      leading: leading,
+      title: Text(capitalizeFirstLetter(item)),
+      contentPadding: contentPadding,
+      horizontalTitleGap: horizontalTitleGap,
+    );
+  }
+}
+
 Column showLists(FoodListModel foodListModel) {
   debugPrint('Food List Model Date: ${foodListModel.date.toString()}');
   DateTime currentDate = DateTime.now();
@@ -343,6 +366,7 @@ Column showLists(FoodListModel foodListModel) {
       else
         Column(
           children: [
+            foodDataDividerWidget(),
             Row(
               children: [
                 Text('Date:  ', style: fridgeDataDateTitleTextStyle()),
@@ -364,26 +388,30 @@ Column showLists(FoodListModel foodListModel) {
                       style: fridgeDataDateDifferenceTextStyle())
               ],
             ),
-            const SizedBox(height: 20),
+            foodDataDividerWidget(),
             Text(
               AppTexts.currentFoodListTitle,
               style: listTitleTextStyle(),
             ),
             ListView.builder(
               shrinkWrap: true,
-              itemCount: foodListModel.newFoodList.length,
+              itemCount:
+                  calculateItemQuantities(foodListModel.newFoodList).length,
               itemBuilder: (context, index) {
-                final food = foodListModel.newFoodList[index];
-                return ListTile(
-                  leading: AppIcons.fridgeContentItemIcon,
-                  title: Text(capitalizeFirstLetter(food)),
-                  subtitle: Text(
-                      'x${calculateItemQuantities(foodListModel.newFoodList)[food]}'),
-                  contentPadding: itemLeadingAndTitlePadding(),
-                  horizontalTitleGap: appListTileHorizontalTitleGap(),
-                );
+                final item = calculateItemQuantities(foodListModel.newFoodList)
+                    .keys
+                    .elementAt(index);
+                final quantity =
+                    calculateItemQuantities(foodListModel.newFoodList)[item];
+                return buildFoodListTileItem(
+                    item,
+                    quantity!,
+                    AppIcons.fridgeContentItemIcon,
+                    itemLeadingAndTitlePadding(),
+                    appListTileHorizontalTitleGap());
               },
             ),
+            foodDataDividerWidget(),
           ],
         ),
       if (foodListModel.foodToAddList.isNotEmpty)
@@ -395,18 +423,24 @@ Column showLists(FoodListModel foodListModel) {
             ),
             ListView.builder(
               shrinkWrap: true,
-              itemCount: foodListModel.foodToAddList.length,
+              itemCount:
+                  calculateItemQuantities(foodListModel.foodToAddList).length,
               itemBuilder: (context, index) {
-                final food =
-                    capitalizeFirstLetter(foodListModel.foodToAddList[index]);
-                return ListTile(
-                  leading: AppIcons.addedFoodIcon,
-                  title: Text(food),
-                  contentPadding: itemLeadingAndTitlePadding(),
-                  horizontalTitleGap: appListTileHorizontalTitleGap(),
-                );
+                final item =
+                    calculateItemQuantities(foodListModel.foodToAddList)
+                        .keys
+                        .elementAt(index);
+                final quantity =
+                    calculateItemQuantities(foodListModel.foodToAddList)[item];
+                return buildFoodListTileItem(
+                    item,
+                    quantity!,
+                    AppIcons.addedFoodIcon,
+                    itemLeadingAndTitlePadding(),
+                    appListTileHorizontalTitleGap());
               },
             ),
+            foodDataDividerWidget(),
           ],
         ),
       if (foodListModel.foodToRemoveList.isNotEmpty)
@@ -418,25 +452,31 @@ Column showLists(FoodListModel foodListModel) {
             ),
             ListView.builder(
               shrinkWrap: true,
-              itemCount: foodListModel.foodToRemoveList.length,
+              itemCount: calculateItemQuantities(foodListModel.foodToRemoveList)
+                  .length,
               itemBuilder: (context, index) {
-                final food = capitalizeFirstLetter(
-                    foodListModel.foodToRemoveList[index]);
-                return ListTile(
-                  leading: AppIcons.removedFoodIcon,
-                  title: Text(food),
-                  contentPadding: itemLeadingAndTitlePadding(),
-                  horizontalTitleGap: appListTileHorizontalTitleGap(),
-                );
+                final item =
+                    calculateItemQuantities(foodListModel.foodToRemoveList)
+                        .keys
+                        .elementAt(index);
+                final quantity = calculateItemQuantities(
+                    foodListModel.foodToRemoveList)[item];
+                return buildFoodListTileItem(
+                    item,
+                    quantity!,
+                    AppIcons.removedFoodIcon,
+                    itemLeadingAndTitlePadding(),
+                    appListTileHorizontalTitleGap());
               },
             ),
+            foodDataDividerWidget(),
           ],
         ),
-      if (foodListModel.foodChangeTimeMinute != 0)
-        Text(
-          AppTexts.foodDurationMessage(foodListModel.foodChangeTimeMinute),
-          style: foodDurationTextStyle(),
-        ),
+      Text(
+        AppTexts.foodDurationMessage(foodListModel.foodChangeTimeMinute),
+        style: foodDurationTextStyle(),
+      ),
+      foodDataDividerWidget(),
     ],
   );
 }
