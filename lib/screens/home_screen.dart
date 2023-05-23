@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Text(
                   loggedInUser.firstName == null
                       ? 'Hello,'
-                      : getWelcomeText('${loggedInUser.firstName}'),
+                      : AppTexts.getWelcomeText('${loggedInUser.firstName}'),
                   style: welcomeTextStyle(context),
                 ),
               ),

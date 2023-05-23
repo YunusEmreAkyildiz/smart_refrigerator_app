@@ -1,3 +1,5 @@
+import 'package:smart_refrigerator_app/model/food_list_model.dart';
+
 class AppTexts {
   static const String dontHaveAnAccountText = "Don't have an account?";
   static const String signUpPageAppBarTitle = 'Join FridgeTracker Now!';
@@ -39,6 +41,14 @@ class AppTexts {
         return '*The content has not changed for $minute minutes';
     }
   }
+
+  static String getWelcomeText(firstName) {
+    return 'Hello, $firstName';
+  }
+
+  static String getFridgeDataDate(FoodListModel foodListModel) {
+    return '${foodListModel.date!.hour}.${foodListModel.date!.minute}   ${foodListModel.date!.day}/${foodListModel.date!.month}/${foodListModel.date!.year}';
+  }
 }
 
 class AppRegExps {
@@ -46,8 +56,4 @@ class AppRegExps {
       RegExp(r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+$');
   static RegExp passwordRegExp = RegExp(r'^.{6,}$');
   static RegExp nameRegExp = RegExp(r'^.{3,}$');
-}
-
-String getWelcomeText(firstName) {
-  return 'Hello, $firstName';
 }

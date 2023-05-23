@@ -252,6 +252,7 @@ void updateUserDocument(UserModel updatedUser) async {
 
 Future<FoodListModel> compareFoodLists(String userId) async {
   final fridgeDataModel = await getFridgeDataModelFromJson(userId);
+  debugPrint('Fridge Data Model Date: ${fridgeDataModel.date.toString()}');
   try {
     final user = await getUser(userId);
     final currentFoodList = user.food ?? [];
@@ -300,7 +301,8 @@ Future<FoodListModel> compareFoodLists(String userId) async {
         foodToAddList: foodToAddList,
         foodToRemoveList: foodToRemoveList,
         foodChangeTimeMinute: fridgeDataModel.foodChangeTimeMinute!,
-        changedFoodList: changedFoodList);
+        changedFoodList: changedFoodList,
+        date: fridgeDataModel.date);
 
     return foodListModel;
   } catch (e) {
@@ -314,6 +316,10 @@ String capitalizeFirstLetter(String text) {
 }
 
 Column showLists(FoodListModel foodListModel) {
+  debugPrint('Food List Model Date: ${foodListModel.date.toString()}');
+  DateTime currentDate = DateTime.now();
+  Duration dateDifference = currentDate.difference(foodListModel.date!);
+
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
@@ -325,6 +331,30 @@ Column showLists(FoodListModel foodListModel) {
       else
         Column(
           children: [
+            Row(
+              children: [
+                Text('Date:  ', style: fridgeDataDateTitleTextStyle()),
+                Text(
+                  AppTexts.getFridgeDataDate(foodListModel),
+                  style: fridgeDataDateTextStyle(),
+                ),
+                // More than 1 day difference
+                if (dateDifference.inDays > 0)
+                  Text('    (${dateDifference.inDays} day(s) ago)',
+                      style: fridgeDataDateDifferenceTextStyle())
+
+                // Less than 1 day, more than 1 hour difference
+                else if (dateDifference.inHours > 0)
+                  Text('    (${dateDifference.inHours} hour(s) ago)',
+                      style: fridgeDataDateDifferenceTextStyle())
+
+                // Less than 1 hour, more than 1 minute
+                else
+                  Text('    (${dateDifference.inMinutes} minute(s) ago)',
+                      style: fridgeDataDateDifferenceTextStyle())
+              ],
+            ),
+            const SizedBox(height: 20),
             Text(
               AppTexts.currentFoodListTitle,
               style: listTitleTextStyle(),

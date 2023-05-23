@@ -58,6 +58,18 @@ TextStyle? aboutMainTextStyle(BuildContext context) {
       color: Colors.black.withOpacity(0.78));
 }
 
+TextStyle? fridgeDataDateTitleTextStyle() {
+  return const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
+}
+
+TextStyle? fridgeDataDateTextStyle() {
+  return const TextStyle(fontSize: 17, fontWeight: FontWeight.w400);
+}
+
+TextStyle? fridgeDataDateDifferenceTextStyle() {
+  return const TextStyle(fontSize: 16, fontWeight: FontWeight.w300);
+}
+
 double appScreenPadding(BuildContext context) {
   return (MediaQuery.of(context).size.aspectRatio * 20);
 }
