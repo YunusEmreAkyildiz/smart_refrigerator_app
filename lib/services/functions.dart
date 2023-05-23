@@ -1,11 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:smart_refrigerator_app/model/food_list_model.dart';
+import 'package:smart_refrigerator_app/model/fridge_data_model.dart';
 import 'package:smart_refrigerator_app/shared/colors.dart';
 import 'package:smart_refrigerator_app/model/user_model.dart';
 import 'package:smart_refrigerator_app/screens/home_screen.dart';
 import 'package:smart_refrigerator_app/screens/sign_in_screen.dart';
+import 'package:smart_refrigerator_app/shared/icons.dart';
+import 'package:smart_refrigerator_app/shared/images.dart';
+import 'package:smart_refrigerator_app/shared/styles.dart';
+import 'package:smart_refrigerator_app/shared/texts.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'package:smart_refrigerator_app/shared/widgets/other_widgets.dart';
 
 Future signIn(String email, String password, FormState? currentState, formKey,
     FirebaseAuth auth, BuildContext context) async {
@@ -129,8 +140,362 @@ Future signOut(BuildContext context) async {
   await FirebaseAuth.instance.signOut().then((value) => {
         Fluttertoast.showToast(
             msg: 'Successfully signed out',
-            backgroundColor: AppColors.toastSuccessfulColor)
+            backgroundColor: AppColors.toastSuccessfulColor),
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const SignInScreen()),
+            (route) => false)
       });
-  Navigator.of(context)
-      .pushReplacement(MaterialPageRoute(builder: (context) => SignInScreen()));
+}
+
+Future<String> getImageUrl() async {
+  final storageRef = FirebaseStorage.instance.ref();
+  final pathReference = storageRef.child("${AppTexts.userAyseOzgurId}-p.jpg");
+  /****************************************************************/
+  // A different/alternative approach
+  // final gsReference = FirebaseStorage.instance.refFromURL(
+  //     "gs://smart-refrigerator-app-db.appspot.com/0105202315:31:40.jpg");
+  // final imageRef = gsReference.child("images/island.jpg");
+  /****************************************************************/
+  String imageUrl;
+
+  try {
+    imageUrl = await pathReference.getDownloadURL();
+    return imageUrl;
+  } catch (e) {
+    debugPrint(e.toString());
+    return '';
+  }
+}
+
+FutureBuilder? getImage() {
+  return FutureBuilder(
+    future: getImageUrl(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const CircularProgressIndicator(
+          color: AppColors.primaryAppColor,
+        );
+      }
+      if (snapshot.hasError) {
+        return Text('Error: ${snapshot.error}');
+      }
+      if (snapshot.hasData) {
+        String imageUrl = snapshot.data.toString();
+        return AppImages.fridgeImage(imageUrl);
+      }
+      return const Text(AppTexts.noImageFoundText);
+    },
+  );
+}
+
+Future<UserModel> getUser(String userId) async {
+  // Get the current user's document from Cloud Firestore
+  final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
+  final userSnapshot = await userDoc.get();
+  final userMap = userSnapshot.data();
+  UserModel user;
+
+  if (userMap != null) {
+    user = UserModel.fromMap(userMap);
+  } else {
+    throw Exception(AppTexts.userDocumentNotFound);
+  }
+  return user;
+}
+
+Future<FridgeDataModel> getFridgeDataModelFromJson(String userId) async {
+  FridgeDataModel fridgeDataModel1;
+  FridgeDataModel fridgeDataModel2;
+
+  // Retrieve the JSON documents from Firebase Storage
+  final storageRef = FirebaseStorage.instance.ref();
+  final pathReference1 = storageRef.child('${AppTexts.userAyseOzgurId}-j.json');
+  final pathReference2 =
+      storageRef.child('${AppTexts.userAyseOzgurId}-j2.json');
+
+  try {
+    // Parse the JSON documents
+    final url1 = await pathReference1.getDownloadURL();
+    final url2 = await pathReference2.getDownloadURL();
+    final response1 = await http.get(Uri.parse(url1));
+    final response2 = await http.get(Uri.parse(url2));
+
+    // Parsing JSON-1 document
+    if (response1.statusCode == 200) {
+      final jsonData1 = json.decode(response1.body) as Map<dynamic, dynamic>;
+      fridgeDataModel1 = FridgeDataModel.fromJson(jsonData1);
+    } else {
+      throw Exception(AppTexts.failedToDownloadJson1);
+    }
+
+    // Parsing JSON-2 document
+    if (response1.statusCode == 200) {
+      final jsonData2 = json.decode(response2.body) as Map<dynamic, dynamic>;
+      fridgeDataModel2 = FridgeDataModel.fromJson(jsonData2);
+    } else {
+      throw Exception(AppTexts.failedToDownloadJson2);
+    }
+
+    // Assign JSON-2's foodChangTimeMinute to JSON-1's, in order to do future ops with only one JSON document
+    fridgeDataModel1.foodChangeTimeMinute =
+        fridgeDataModel2.foodChangeTimeMinute;
+
+    return fridgeDataModel1;
+  } catch (e) {
+    debugPrint(e.toString());
+    throw Exception(e);
+  }
+}
+
+void updateUserDocument(UserModel updatedUser) async {
+  final userDoc =
+      FirebaseFirestore.instance.collection('users').doc(updatedUser.userId);
+  await userDoc.update(updatedUser.toMap());
+}
+
+Future<FoodListModel> compareFoodLists(String userId) async {
+  final fridgeDataModel = await getFridgeDataModelFromJson(userId);
+  debugPrint('Fridge Data Model Date: ${fridgeDataModel.date.toString()}');
+  try {
+    final user = await getUser(userId);
+    final currentFoodList = user.food ?? [];
+
+    // Compare the food list from the JSON document with the current food list
+    final newFoodList = fridgeDataModel.food!;
+    List<String> changedFoodList = [];
+    List<String> foodToAddList = [];
+    List<String> foodToRemoveList = [];
+
+    // Finding items to add
+    for (var food in newFoodList) {
+      if (currentFoodList.contains(food)) {
+        currentFoodList.remove(food);
+      } else {
+        foodToAddList.add(food);
+        changedFoodList.add(food);
+      }
+    }
+
+    // Finding items to remove
+    for (var food in currentFoodList) {
+      foodToRemoveList.add(food);
+      changedFoodList.add(food);
+    }
+
+    debugPrint('foodToAddList: $foodToAddList');
+    debugPrint('foodToRemoveList: $foodToRemoveList');
+
+    // Update the user's document if there are changes in the food list
+    if (changedFoodList.isNotEmpty) {
+      user.food = newFoodList;
+      final updatedUserModel = user;
+      updateUserDocument(updatedUserModel);
+    }
+
+    // Show the food lists and duration in the fridge on debug console
+    debugPrint('Current Food List After Ops: $currentFoodList');
+    debugPrint('JSON Food List: $newFoodList');
+    debugPrint('Changed Food List: $changedFoodList');
+    debugPrint(
+        'Food Duration (in minutes): ${fridgeDataModel.foodChangeTimeMinute}');
+
+    final foodListModel = FoodListModel(
+        newFoodList: newFoodList,
+        foodToAddList: foodToAddList,
+        foodToRemoveList: foodToRemoveList,
+        foodChangeTimeMinute: fridgeDataModel.foodChangeTimeMinute!,
+        changedFoodList: changedFoodList,
+        date: fridgeDataModel.date);
+
+    return foodListModel;
+  } catch (e) {
+    debugPrint(e.toString());
+    throw Exception(e);
+  }
+}
+
+String capitalizeFirstLetter(String text) {
+  return text.substring(0, 1).toUpperCase() + text.substring(1);
+}
+
+Map<String, int> calculateItemQuantities(List<String> items) {
+  Map<String, int> quantities = {};
+  for (var item in items) {
+    if (quantities.containsKey(item)) {
+      quantities[item] = quantities[item]! + 1;
+    } else {
+      quantities[item] = 1;
+    }
+  }
+  return quantities;
+}
+
+Widget buildFoodListTileItem(String item, int quantity, Icon leading,
+    EdgeInsets contentPadding, double horizontalTitleGap) {
+  if (quantity > 1) {
+    return ListTile(
+      leading: leading,
+      title: Text(capitalizeFirstLetter(item)),
+      subtitle: Text(' x$quantity'),
+      contentPadding: contentPadding,
+      horizontalTitleGap: horizontalTitleGap,
+    );
+  } else {
+    return ListTile(
+      leading: leading,
+      title: Text(capitalizeFirstLetter(item)),
+      contentPadding: contentPadding,
+      horizontalTitleGap: horizontalTitleGap,
+    );
+  }
+}
+
+Column showLists(FoodListModel foodListModel) {
+  debugPrint('Food List Model Date: ${foodListModel.date.toString()}');
+  DateTime currentDate = DateTime.now();
+  Duration dateDifference = currentDate.difference(foodListModel.date!);
+
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      if (foodListModel.newFoodList.isEmpty)
+        Text(
+          AppTexts.emptyFridgeMessage,
+          style: emptyFridgeTextStyle(),
+        )
+      else
+        Column(
+          children: [
+            foodDataDividerWidget(),
+            Row(
+              children: [
+                Text('Date:  ', style: fridgeDataDateTitleTextStyle()),
+                Text(
+                  AppTexts.getFridgeDataDate(foodListModel),
+                  style: fridgeDataDateTextStyle(),
+                ),
+                // More than 1 day difference
+                if (dateDifference.inDays > 0)
+                  Text('    (${dateDifference.inDays} day(s) ago)',
+                      style: fridgeDataDateDifferenceTextStyle())
+                // Less than 1 day, more than 1 hour difference
+                else if (dateDifference.inHours > 0)
+                  Text('    (${dateDifference.inHours} hour(s) ago)',
+                      style: fridgeDataDateDifferenceTextStyle())
+                // Less than 1 hour, more than 1 minute difference
+                else
+                  Text('    (${dateDifference.inMinutes} minute(s) ago)',
+                      style: fridgeDataDateDifferenceTextStyle())
+              ],
+            ),
+            foodDataDividerWidget(),
+            Text(
+              AppTexts.currentFoodListTitle,
+              style: listTitleTextStyle(),
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount:
+                  calculateItemQuantities(foodListModel.newFoodList).length,
+              itemBuilder: (context, index) {
+                final item = calculateItemQuantities(foodListModel.newFoodList)
+                    .keys
+                    .elementAt(index);
+                final quantity =
+                    calculateItemQuantities(foodListModel.newFoodList)[item];
+                return buildFoodListTileItem(
+                    item,
+                    quantity!,
+                    AppIcons.fridgeContentItemIcon,
+                    itemLeadingAndTitlePadding(),
+                    appListTileHorizontalTitleGap());
+              },
+            ),
+            foodDataDividerWidget(),
+          ],
+        ),
+      if (foodListModel.foodToAddList.isNotEmpty)
+        Column(
+          children: [
+            Text(
+              AppTexts.foodToAddListTitle,
+              style: listTitleTextStyle(),
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount:
+                  calculateItemQuantities(foodListModel.foodToAddList).length,
+              itemBuilder: (context, index) {
+                final item =
+                    calculateItemQuantities(foodListModel.foodToAddList)
+                        .keys
+                        .elementAt(index);
+                final quantity =
+                    calculateItemQuantities(foodListModel.foodToAddList)[item];
+                return buildFoodListTileItem(
+                    item,
+                    quantity!,
+                    AppIcons.addedFoodIcon,
+                    itemLeadingAndTitlePadding(),
+                    appListTileHorizontalTitleGap());
+              },
+            ),
+            foodDataDividerWidget(),
+          ],
+        ),
+      if (foodListModel.foodToRemoveList.isNotEmpty)
+        Column(
+          children: [
+            Text(
+              AppTexts.foodToRemoveListTitle,
+              style: listTitleTextStyle(),
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: calculateItemQuantities(foodListModel.foodToRemoveList)
+                  .length,
+              itemBuilder: (context, index) {
+                final item =
+                    calculateItemQuantities(foodListModel.foodToRemoveList)
+                        .keys
+                        .elementAt(index);
+                final quantity = calculateItemQuantities(
+                    foodListModel.foodToRemoveList)[item];
+                return buildFoodListTileItem(
+                    item,
+                    quantity!,
+                    AppIcons.removedFoodIcon,
+                    itemLeadingAndTitlePadding(),
+                    appListTileHorizontalTitleGap());
+              },
+            ),
+            foodDataDividerWidget(),
+          ],
+        ),
+      Text(
+        AppTexts.foodDurationMessage(foodListModel.foodChangeTimeMinute),
+        style: foodDurationTextStyle(),
+      ),
+      foodDataDividerWidget(),
+    ],
+  );
+}
+
+FutureBuilder showFridge(String userId) {
+  return FutureBuilder<FoodListModel>(
+    future: compareFoodLists(userId),
+    builder: (futureContext, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const CircularProgressIndicator();
+      }
+      if (snapshot.hasError) {
+        return Text('Error: ${snapshot.error}');
+      }
+      if (snapshot.hasData) {
+        final fridgeData = snapshot.data!;
+        return showLists(fridgeData);
+      }
+      return const Text(AppTexts.noDataAvailable);
+    },
+  );
 }

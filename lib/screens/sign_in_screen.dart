@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:smart_refrigerator_app/shared/icons.dart';
 import 'package:smart_refrigerator_app/shared/images.dart';
 import 'package:smart_refrigerator_app/shared/texts.dart';
 import 'package:smart_refrigerator_app/screens/sign_up_screen.dart';
 import 'package:smart_refrigerator_app/services/functions.dart';
-import 'package:smart_refrigerator_app/widgets/buttons.dart';
-import 'package:smart_refrigerator_app/widgets/text_widgets.dart';
+import 'package:smart_refrigerator_app/shared/widgets/buttons.dart';
+import 'package:smart_refrigerator_app/shared/widgets/text_widgets.dart';
 import 'package:smart_refrigerator_app/shared/colors.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -28,7 +29,7 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     final emailField = textFormFieldWidget(
-        false, false, emailController, const Icon(Icons.mail), "E-mail",
+        false, false, emailController, const Icon(AppIcons.emailIcon), "E-mail",
         validator: (value) {
       if (value!.isEmpty) {
         return ('Please enter your E-mail');
@@ -40,9 +41,8 @@ class _SignInScreenState extends State<SignInScreen> {
     },
         textInputAction: TextInputAction.next,
         inputType: TextInputType.emailAddress);
-    final passwordField = textFormFieldWidget(
-        false, true, passwordController, const Icon(Icons.lock), "Password",
-        validator: (value) {
+    final passwordField = textFormFieldWidget(false, true, passwordController,
+        const Icon(AppIcons.passwordIcon), "Password", validator: (value) {
       if (value!.isEmpty) {
         return ('Please enter your password');
       }
@@ -77,7 +77,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     appButton(context, 'Sign In', () {
                       signIn(emailController.text, passwordController.text,
                           _formKey.currentState, _formKey, _auth, context);
-                    }),
+                    }, autofocus: true),
                     const SizedBox(height: 15),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

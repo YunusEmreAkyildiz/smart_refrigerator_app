@@ -1,9 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:smart_refrigerator_app/screens/profile_screen.dart';
+import 'package:smart_refrigerator_app/shared/icons.dart';
+import 'package:smart_refrigerator_app/shared/styles.dart';
 import 'package:smart_refrigerator_app/shared/texts.dart';
 import 'package:smart_refrigerator_app/model/user_model.dart';
 import 'package:smart_refrigerator_app/services/functions.dart';
+import 'package:smart_refrigerator_app/shared/widgets/buttons.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,6 +19,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
+  Widget changeWidget1 = AppIcons.imageReplacerIcon;
+  Widget changeWidget2 = const SizedBox();
 
   @override
   void initState() {
@@ -24,7 +30,11 @@ class _HomeScreenState extends State<HomeScreen> {
         .doc(user!.uid)
         .get()
         .then((value) {
-      loggedInUser = UserModel.fromMap(value.data());
+      if (value.data() != null) {
+        loggedInUser = UserModel.fromMap(value.data());
+      } else {
+        throw Exception('User document not found');
+      }
       setState(() {});
     });
   }
@@ -33,33 +43,64 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: const Icon(AppIcons.homeLeadingIcon),
+        leadingWidth: 45,
         title: const Text(AppTexts.homeScreenAppBarTitle),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Welcome',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 15),
-            Text('${loggedInUser.firstName} ${loggedInUser.lastName}',
-                style: const TextStyle(
-                    color: Colors.black54, fontWeight: FontWeight.w500)),
-            const SizedBox(height: 10),
-            Text('${loggedInUser.email}',
-                style: const TextStyle(
-                    color: Colors.black54, fontWeight: FontWeight.w500)),
-            const SizedBox(height: 15),
-            ActionChip(
-              avatar: Icon(Icons.exit_to_app),
-              label: const Text('Sign Out'),
+        titleSpacing: 5,
+        elevation: 0,
+        actions: [
+          IconButton(
+              icon: const Icon(AppIcons.homeActionsAccountIcon),
               onPressed: () {
-                signOut(context);
-              },
-            )
-          ],
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ProfileScreen()));
+              })
+        ],
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(appScreenPadding(context)),
+        child: SingleChildScrollView(
+          child: Column(
+            //crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 5),
+              SizedBox(
+                width: (MediaQuery.of(context).size.width),
+                child: Text(
+                  loggedInUser.firstName == null
+                      ? 'Hello,'
+                      : AppTexts.getWelcomeText('${loggedInUser.firstName}'),
+                  style: welcomeTextStyle(context),
+                ),
+              ),
+              const SizedBox(height: 15),
+              Text(
+                AppTexts.homeScreenMainText,
+                style: homeScreenMainTextStyle(context),
+              ),
+              const SizedBox(height: 15),
+              Center(
+                child: changeWidget1,
+              ),
+              const SizedBox(height: 10),
+              Center(
+                child: changeWidget2,
+              ),
+              const SizedBox(height: 15),
+              appButton(context, AppTexts.showFridgeButtonText, () {
+                setState(() {
+                  debugPrint('getImage CALLED!');
+                  changeWidget1 = getImage()!;
+                  debugPrint('getImage FINISHED, showFridge CALLED!');
+                  changeWidget2 = showFridge(loggedInUser.userId.toString());
+                  debugPrint('showFridge FINISHED!');
+                });
+              }),
+              const SizedBox(height: 15)
+            ],
+          ),
         ),
       ),
     );
