@@ -315,6 +315,18 @@ String capitalizeFirstLetter(String text) {
   return text.substring(0, 1).toUpperCase() + text.substring(1);
 }
 
+Map<String, int> calculateItemQuantities(List<String> items) {
+  Map<String, int> quantities = {};
+  for (var item in items) {
+    if (quantities.containsKey(item)) {
+      quantities[item] = quantities[item]! + 1;
+    } else {
+      quantities[item] = 1;
+    }
+  }
+  return quantities;
+}
+
 Column showLists(FoodListModel foodListModel) {
   debugPrint('Food List Model Date: ${foodListModel.date.toString()}');
   DateTime currentDate = DateTime.now();
@@ -342,13 +354,11 @@ Column showLists(FoodListModel foodListModel) {
                 if (dateDifference.inDays > 0)
                   Text('    (${dateDifference.inDays} day(s) ago)',
                       style: fridgeDataDateDifferenceTextStyle())
-
                 // Less than 1 day, more than 1 hour difference
                 else if (dateDifference.inHours > 0)
                   Text('    (${dateDifference.inHours} hour(s) ago)',
                       style: fridgeDataDateDifferenceTextStyle())
-
-                // Less than 1 hour, more than 1 minute
+                // Less than 1 hour, more than 1 minute difference
                 else
                   Text('    (${dateDifference.inMinutes} minute(s) ago)',
                       style: fridgeDataDateDifferenceTextStyle())
@@ -363,11 +373,12 @@ Column showLists(FoodListModel foodListModel) {
               shrinkWrap: true,
               itemCount: foodListModel.newFoodList.length,
               itemBuilder: (context, index) {
-                final food =
-                    capitalizeFirstLetter(foodListModel.newFoodList[index]);
+                final food = foodListModel.newFoodList[index];
                 return ListTile(
                   leading: AppIcons.fridgeContentItemIcon,
-                  title: Text(food),
+                  title: Text(capitalizeFirstLetter(food)),
+                  subtitle: Text(
+                      'x${calculateItemQuantities(foodListModel.newFoodList)[food]}'),
                   contentPadding: itemLeadingAndTitlePadding(),
                   horizontalTitleGap: appListTileHorizontalTitleGap(),
                 );
