@@ -30,7 +30,7 @@ Future signIn(String email, String password, FormState? currentState, formKey,
                     msg: 'Login successful',
                     backgroundColor: AppColors.toastSuccessfulColor),
                 Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => HomeScreen())),
+                    MaterialPageRoute(builder: (context) => const HomeScreen())),
               });
     } on FirebaseAuthException catch (error) {
       switch (error.code) {
@@ -123,6 +123,7 @@ postDetailsToFirestore(FirebaseAuth auth, String firstName, String lastName,
   userModel.userId = user.uid;
   userModel.firstName = firstName;
   userModel.lastName = lastName;
+  userModel.food = [];
 
   await firebaseFirestore
       .collection("users")
@@ -133,7 +134,7 @@ postDetailsToFirestore(FirebaseAuth auth, String firstName, String lastName,
       backgroundColor: AppColors.toastSuccessfulColor);
 
   Navigator.pushAndRemoveUntil((context),
-      MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false);
+      MaterialPageRoute(builder: (context) => const HomeScreen()), (route) => false);
 }
 
 Future signOut(BuildContext context) async {
@@ -149,13 +150,10 @@ Future signOut(BuildContext context) async {
 
 Future<String> getImageUrl() async {
   final storageRef = FirebaseStorage.instance.ref();
+  // For unrecognized, pure image
   final pathReference = storageRef.child("${AppTexts.userAyseOzgurId}-p.jpg");
-  /****************************************************************/
-  // A different/alternative approach
-  // final gsReference = FirebaseStorage.instance.refFromURL(
-  //     "gs://smart-refrigerator-app-db.appspot.com/0105202315:31:40.jpg");
-  // final imageRef = gsReference.child("images/island.jpg");
-  /****************************************************************/
+  // For recognized image
+  //final pathReference = storageRef.child("${AppTexts.userAyseOzgurId}-r.jpg");
   String imageUrl;
 
   try {
