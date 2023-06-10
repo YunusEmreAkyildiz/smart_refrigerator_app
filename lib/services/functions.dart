@@ -29,8 +29,8 @@ Future signIn(String email, String password, FormState? currentState, formKey,
                 Fluttertoast.showToast(
                     msg: 'Login successful',
                     backgroundColor: AppColors.toastSuccessfulColor),
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const HomeScreen())),
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => const HomeScreen())),
               });
     } on FirebaseAuthException catch (error) {
       switch (error.code) {
@@ -133,8 +133,10 @@ postDetailsToFirestore(FirebaseAuth auth, String firstName, String lastName,
       msg: "Account created successfully",
       backgroundColor: AppColors.toastSuccessfulColor);
 
-  Navigator.pushAndRemoveUntil((context),
-      MaterialPageRoute(builder: (context) => const HomeScreen()), (route) => false);
+  Navigator.pushAndRemoveUntil(
+      (context),
+      MaterialPageRoute(builder: (context) => const HomeScreen()),
+      (route) => false);
 }
 
 Future signOut(BuildContext context) async {
@@ -329,11 +331,13 @@ Map<String, int> calculateItemQuantities(List<String> items) {
 }
 
 Widget buildFoodListTileItem(String item, int quantity, Icon leading,
-    EdgeInsets contentPadding, double horizontalTitleGap) {
+    EdgeInsets contentPadding, double horizontalTitleGap, bool isRunOut) {
   if (quantity > 1) {
     return ListTile(
       leading: leading,
-      title: Text(capitalizeFirstLetter(item)),
+      title: isRunOut
+          ? Text("${capitalizeFirstLetter(item)} has run out!")
+          : Text(capitalizeFirstLetter(item)),
       subtitle: Text(' x$quantity'),
       contentPadding: contentPadding,
       horizontalTitleGap: horizontalTitleGap,
@@ -341,7 +345,9 @@ Widget buildFoodListTileItem(String item, int quantity, Icon leading,
   } else {
     return ListTile(
       leading: leading,
-      title: Text(capitalizeFirstLetter(item)),
+      title: isRunOut
+          ? Text("${capitalizeFirstLetter(item)} has run out!")
+          : Text(capitalizeFirstLetter(item)),
       contentPadding: contentPadding,
       horizontalTitleGap: horizontalTitleGap,
     );
@@ -406,7 +412,8 @@ Column showLists(FoodListModel foodListModel) {
                     quantity!,
                     AppIcons.fridgeContentItemIcon,
                     itemLeadingAndTitlePadding(),
-                    appListTileHorizontalTitleGap());
+                    appListTileHorizontalTitleGap(),
+                    false);
               },
             ),
             foodDataDividerWidget(),
@@ -435,7 +442,8 @@ Column showLists(FoodListModel foodListModel) {
                     quantity!,
                     AppIcons.addedFoodIcon,
                     itemLeadingAndTitlePadding(),
-                    appListTileHorizontalTitleGap());
+                    appListTileHorizontalTitleGap(),
+                    false);
               },
             ),
             foodDataDividerWidget(),
@@ -459,12 +467,22 @@ Column showLists(FoodListModel foodListModel) {
                         .elementAt(index);
                 final quantity = calculateItemQuantities(
                     foodListModel.foodToRemoveList)[item];
+                if (!foodListModel.newFoodList.contains(item)) {
+                  return buildFoodListTileItem(
+                      item,
+                      quantity!,
+                      AppIcons.runOutFoodIcon,
+                      itemLeadingAndTitlePadding(),
+                      appListTileHorizontalTitleGap(),
+                      true);
+                }
                 return buildFoodListTileItem(
                     item,
                     quantity!,
                     AppIcons.removedFoodIcon,
                     itemLeadingAndTitlePadding(),
-                    appListTileHorizontalTitleGap());
+                    appListTileHorizontalTitleGap(),
+                    false);
               },
             ),
             foodDataDividerWidget(),

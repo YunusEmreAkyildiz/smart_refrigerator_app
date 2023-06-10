@@ -22,6 +22,12 @@ class AppIcons {
     color: Colors.red,
     size: 30,
   );
+  static const Icon runOutFoodIcon = Icon(
+    Icons.warning_rounded,
+    //color: Colors.amber.shade700,
+    color: Colors.red,
+    size: 30,
+  );
   static const Icon imageReplacerIcon = Icon(
     Icons.cloud_download,
     size: 120,
