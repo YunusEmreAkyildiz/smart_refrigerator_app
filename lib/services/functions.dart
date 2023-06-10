@@ -204,43 +204,25 @@ Future<UserModel> getUser(String userId) async {
 }
 
 Future<FridgeDataModel> getFridgeDataModelFromJson(String userId) async {
-  FridgeDataModel fridgeDataModel1;
-  FridgeDataModel fridgeDataModel2;
+  FridgeDataModel fridgeDataModel;
 
-  // Retrieve the JSON documents from Firebase Storage
+  // Retrieve the JSON document from Firebase Storage
   final storageRef = FirebaseStorage.instance.ref();
   final pathReference1 = storageRef.child('${AppTexts.userAyseOzgurId}-j.json');
-  final pathReference2 =
-      storageRef.child('${AppTexts.userAyseOzgurId}-j2.json');
 
   try {
-    // Parse the JSON documents
-    final url1 = await pathReference1.getDownloadURL();
-    final url2 = await pathReference2.getDownloadURL();
-    final response1 = await http.get(Uri.parse(url1));
-    final response2 = await http.get(Uri.parse(url2));
+    // Parse the JSON document
+    final url = await pathReference1.getDownloadURL();
+    final response = await http.get(Uri.parse(url));
 
-    // Parsing JSON-1 document
-    if (response1.statusCode == 200) {
-      final jsonData1 = json.decode(response1.body) as Map<dynamic, dynamic>;
-      fridgeDataModel1 = FridgeDataModel.fromJson(jsonData1);
+    if (response.statusCode == 200) {
+      final jsonData1 = json.decode(response.body) as Map<dynamic, dynamic>;
+      fridgeDataModel = FridgeDataModel.fromJson(jsonData1);
     } else {
       throw Exception(AppTexts.failedToDownloadJson1);
     }
+    return fridgeDataModel;
 
-    // Parsing JSON-2 document
-    if (response1.statusCode == 200) {
-      final jsonData2 = json.decode(response2.body) as Map<dynamic, dynamic>;
-      fridgeDataModel2 = FridgeDataModel.fromJson(jsonData2);
-    } else {
-      throw Exception(AppTexts.failedToDownloadJson2);
-    }
-
-    // Assign JSON-2's foodChangTimeMinute to JSON-1's, in order to do future ops with only one JSON document
-    fridgeDataModel1.foodChangeTimeMinute =
-        fridgeDataModel2.foodChangeTimeMinute;
-
-    return fridgeDataModel1;
   } catch (e) {
     debugPrint(e.toString());
     throw Exception(e);
@@ -336,7 +318,7 @@ Widget buildFoodListTileItem(String item, int quantity, Icon leading,
     return ListTile(
       leading: leading,
       title: isRunOut
-          ? Text("${capitalizeFirstLetter(item)} has run out!")
+          ? Text("Hey, ${capitalizeFirstLetter(item)} has run out!")
           : Text(capitalizeFirstLetter(item)),
       subtitle: Text(' x$quantity'),
       contentPadding: contentPadding,
@@ -346,7 +328,7 @@ Widget buildFoodListTileItem(String item, int quantity, Icon leading,
     return ListTile(
       leading: leading,
       title: isRunOut
-          ? Text("${capitalizeFirstLetter(item)} has run out!")
+          ? Text("Hey, ${capitalizeFirstLetter(item)} has run out!")
           : Text(capitalizeFirstLetter(item)),
       contentPadding: contentPadding,
       horizontalTitleGap: horizontalTitleGap,

@@ -11,20 +11,22 @@ class AppIcons {
   static const IconData homeActionsAccountIcon = Icons.account_circle;
   static const IconData profileScreenBackButtonIcon = Icons.arrow_back;
   static const IconData signOutIcon = Icons.exit_to_app;
-  static const Icon fridgeContentItemIcon = Icon(Icons.food_bank, size: 30);
+  //static const Icon fridgeContentItemIcon = Icon(Icons.food_bank, size: 30); // Previously used icon
+  static const Icon fridgeContentItemIcon =
+      Icon(Icons.done_outlined, color: AppColors.primaryAppColor, size: 30);
   static const Icon addedFoodIcon = Icon(
     Icons.add,
     color: Colors.green,
     size: 30,
   );
-  static const Icon removedFoodIcon = Icon(
+  static Icon removedFoodIcon = Icon(
     Icons.remove,
-    color: Colors.red,
+    color: Colors.red.shade100,
     size: 30,
   );
   static const Icon runOutFoodIcon = Icon(
     Icons.warning_rounded,
-    //color: Colors.amber.shade700,
+    //color: Colors.amber.shade700, // Alternative color
     color: Colors.red,
     size: 30,
   );
