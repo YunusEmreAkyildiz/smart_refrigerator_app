@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smart_refrigerator_app/shared/colors.dart';
+import 'package:insta_image_viewer/insta_image_viewer.dart';
 
 class AppImages {
   static const String logoWithNoBackground = 'assets/logo-no-background.png';
@@ -14,9 +15,13 @@ class AppImages {
         //color: Colors.black54,
         width: 1.8,
       )),
-      child: Image.network(
-        imageUrl,
-        fit: BoxFit.contain,
+      child: InstaImageViewer(
+        child: Image(
+          image: Image.network(
+            imageUrl,
+            fit: BoxFit.contain,
+          ).image,
+        ),
       ),
     );
   }
