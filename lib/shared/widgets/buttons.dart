@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:smart_refrigerator_app/services/functions.dart';
 import 'package:smart_refrigerator_app/shared/colors.dart';
+import 'package:smart_refrigerator_app/shared/texts.dart';
 
 Material appButton(BuildContext context, String text, Function()? onPressed,
     {IconData? icon, bool autofocus = false}) {
@@ -35,4 +37,10 @@ Material appButton(BuildContext context, String text, Function()? onPressed,
       ),
     ),
   );
+}
+
+ElevatedButton shopOnlineButton(String item) {
+  return ElevatedButton(
+              onPressed: () => shopOnline(item),
+              child: const Text(AppTexts.shoppingButtonText));
 }

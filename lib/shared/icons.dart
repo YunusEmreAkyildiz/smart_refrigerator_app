@@ -21,7 +21,7 @@ class AppIcons {
   );
   static Icon removedFoodIcon = Icon(
     Icons.remove,
-    color: Colors.red.shade100,
+    color: Colors.red.shade800,
     size: 30,
   );
   static const Icon runOutFoodIcon = Icon(

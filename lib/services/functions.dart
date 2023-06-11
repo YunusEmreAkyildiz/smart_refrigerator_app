@@ -13,6 +13,8 @@ import 'package:smart_refrigerator_app/shared/icons.dart';
 import 'package:smart_refrigerator_app/shared/images.dart';
 import 'package:smart_refrigerator_app/shared/styles.dart';
 import 'package:smart_refrigerator_app/shared/texts.dart';
+import 'package:smart_refrigerator_app/shared/widgets/buttons.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -222,7 +224,6 @@ Future<FridgeDataModel> getFridgeDataModelFromJson(String userId) async {
       throw Exception(AppTexts.failedToDownloadJson1);
     }
     return fridgeDataModel;
-
   } catch (e) {
     debugPrint(e.toString());
     throw Exception(e);
@@ -312,8 +313,21 @@ Map<String, int> calculateItemQuantities(List<String> items) {
   return quantities;
 }
 
-Widget buildFoodListTileItem(String item, int quantity, Icon leading,
-    EdgeInsets contentPadding, double horizontalTitleGap, bool isRunOut) {
+shopOnline(String item) async {
+  final Uri url = Uri.parse('https://www.cimri.com/arama?q=$item');
+  if (!await launchUrl(url, mode: LaunchMode.inAppWebView)) {
+    throw Exception('Could not open $url');
+  }
+}
+
+Widget buildFoodListTileItem(
+    BuildContext context,
+    item,
+    int quantity,
+    Icon leading,
+    EdgeInsets contentPadding,
+    double horizontalTitleGap,
+    bool isRunOut) {
   if (quantity > 1) {
     return ListTile(
       leading: leading,
@@ -321,6 +335,7 @@ Widget buildFoodListTileItem(String item, int quantity, Icon leading,
           ? Text("Hey, ${capitalizeFirstLetter(item)} has run out!")
           : Text(capitalizeFirstLetter(item)),
       subtitle: Text(' x$quantity'),
+      trailing: isRunOut ? shopOnlineButton(item) : null,
       contentPadding: contentPadding,
       horizontalTitleGap: horizontalTitleGap,
     );
@@ -330,6 +345,7 @@ Widget buildFoodListTileItem(String item, int quantity, Icon leading,
       title: isRunOut
           ? Text("Hey, ${capitalizeFirstLetter(item)} has run out!")
           : Text(capitalizeFirstLetter(item)),
+      trailing: isRunOut ? shopOnlineButton(item) : null,
       contentPadding: contentPadding,
       horizontalTitleGap: horizontalTitleGap,
     );
@@ -390,6 +406,7 @@ Column showLists(FoodListModel foodListModel) {
                 final quantity =
                     calculateItemQuantities(foodListModel.newFoodList)[item];
                 return buildFoodListTileItem(
+                    context,
                     item,
                     quantity!,
                     AppIcons.fridgeContentItemIcon,
@@ -420,6 +437,7 @@ Column showLists(FoodListModel foodListModel) {
                 final quantity =
                     calculateItemQuantities(foodListModel.foodToAddList)[item];
                 return buildFoodListTileItem(
+                    context,
                     item,
                     quantity!,
                     AppIcons.addedFoodIcon,
@@ -451,6 +469,7 @@ Column showLists(FoodListModel foodListModel) {
                     foodListModel.foodToRemoveList)[item];
                 if (!foodListModel.newFoodList.contains(item)) {
                   return buildFoodListTileItem(
+                      context,
                       item,
                       quantity!,
                       AppIcons.runOutFoodIcon,
@@ -459,6 +478,7 @@ Column showLists(FoodListModel foodListModel) {
                       true);
                 }
                 return buildFoodListTileItem(
+                    context,
                     item,
                     quantity!,
                     AppIcons.removedFoodIcon,
