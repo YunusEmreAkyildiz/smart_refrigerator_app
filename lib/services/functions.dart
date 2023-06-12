@@ -314,7 +314,8 @@ Map<String, int> calculateItemQuantities(List<String> items) {
 }
 
 shopOnline(String item) async {
-  final Uri url = Uri.parse('https://www.cimri.com/arama?q=$item');
+  //final Uri url = Uri.parse('https://www.cimri.com/arama?q=$item'); // More appropriate for Turkish searching
+  final Uri url = Uri.parse('https://www.instacart.com/store/s?k=$item');
   if (!await launchUrl(url, mode: LaunchMode.inAppWebView)) {
     throw Exception('Could not open $url');
   }
