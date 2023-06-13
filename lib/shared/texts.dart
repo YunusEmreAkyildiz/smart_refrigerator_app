@@ -10,6 +10,7 @@ class AppTexts {
       'We hope you have a great day! Would you like to take a look inside of your fridge?';
   static const String signOutText = 'Sign Out';
   static const String noImageFoundText = 'No image found';
+  static const String noItemNameFoundText = '*No name found for this item*';
   static const String userAyseOzgurId = 'eTUGRAQU3ZSb9DFZwrilqd82Shi1';
   static const String alertDialogSignOutTitle = "Hey,";
   static const String alertDialogSignOutContent =
