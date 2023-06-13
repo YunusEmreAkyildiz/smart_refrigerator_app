@@ -210,7 +210,7 @@ Future<FridgeDataModel> getFridgeDataModelFromJson(String userId) async {
 
   // Retrieve the JSON document from Firebase Storage
   final storageRef = FirebaseStorage.instance.ref();
-  final pathReference1 = storageRef.child('${AppTexts.userAyseOzgurId}-j.json');
+  final pathReference1 = storageRef.child('$userId-j.json');
 
   try {
     // Parse the JSON document
